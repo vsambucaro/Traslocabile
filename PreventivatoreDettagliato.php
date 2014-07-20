@@ -492,4 +492,14 @@ class PreventivatoreDettagliato extends Preventivatore
         $this->lista_voci_extra[$id] = $voce;
     }
 
+    public function getServiziAccessoriPartenza()
+    {
+        return $this->lista_servizi_partenza ;
+    }
+
+    public function getServiziAccessoriDestinazione()
+    {
+        return $this->lista_servizi_destinazione ;
+    }
+
 } 

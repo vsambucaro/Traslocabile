@@ -86,15 +86,25 @@ class Preventivo {
         $this->lista_arredi = $lista_arredi;
     }
 
-    //TODO SPLITTARE ANCHE SUL DB
+
     public function setServiziAccessoriPartenza($lista_servizi)
     {
         $this->lista_servizi_accessori_partenza = $lista_servizi;
     }
 
+    public function getServiziAccessoriPartenza()
+    {
+        return $this->lista_servizi_accessori_partenza ;
+    }
+
     public function setServiziAccessoriDestinazione($lista_servizi)
     {
         $this->lista_servizi_accessori_destinazione = $lista_servizi;
+    }
+
+    public function getServiziAccessoriDestinazione()
+    {
+        return $this->lista_servizi_accessori_destinazione ;
     }
 
     public function setServiziIstantaneo($lista_servizi)
@@ -666,13 +676,13 @@ importo_commessa_traslocatore_destinazione)
         return $this->stato;
     }
 
-    public function getDataSopralluogo() { return $this->data_sopralluogo; }
+    public function getDataSopraluogo() { return $this->data_sopraluogo; }
     public function getDataTrasloco() { return $this->data_trasloco; }
     public function getDataPreventivo() { return $this->data_preventivo; }
 
 
     public function setDataTrasloco($data) { $this->data_trasloco = $data; }
-    public function setDataSopralluogo($data) { $this->data_sopralluogo = $data; }
+    public function setDataSopraluogo($data) { $this->data_sopraluogo = $data; }
 
 
     /**
