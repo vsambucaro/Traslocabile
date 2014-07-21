@@ -10,6 +10,14 @@ class Customer {
 
     public $id_cliente;
     public $email;
+    public $ragione_sociale;
+    public $indirizzo;
+    public $citta;
+    public $cap;
+    public $provincia;
+    public $codice_fiscale;
+    public $piva;
+
 
     public function __construct( $id_cliente, $email )
     {

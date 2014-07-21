@@ -18,7 +18,7 @@ class TestPreventivo {
     {
         $preventivo = new Preventivo();
         //$preventivo->load(72);
-        $preventivo->loadDettaglio(115);
+        $preventivo->loadDettaglio(117);
 
         //var_dump($preventivo->getCliente());
         //var_dump($preventivo->getIndirizzoDestinazione());
@@ -29,8 +29,10 @@ class TestPreventivo {
         //$preventivo->setIdTrasportatore( 711 );
         //$preventivo->save();
 
-        //$preventivo->setFlagSopraluogo(1);
-        //$preventivo->save();
+        $preventivo->setImponibile(80);
+        $preventivo->setIva(20);
+        $preventivo->setFlagSopraluogo(1);
+        $preventivo->save();
         echo "\nStato: ".$preventivo->getStato();
         $preventivo->setDataSopraluogo("2014-08-01");
         echo "\nDataSopralugo: ".$preventivo->getDataSopraluogo();

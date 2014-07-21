@@ -49,6 +49,9 @@ class Preventivo {
     protected $importo_commessa_traslocatore_partenza;
     protected $importo_commessa_traslocatore_destinazione;
 
+    protected $imponibile;
+    protected $iva;
+
     public function __construct()
     {
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
@@ -229,12 +232,14 @@ class Preventivo {
         $id_agenzia = $this->id_agenzia;
         $flag_sopraluogo = $this->flag_sopraluogo;
         $note = $this->note;
+        $imponibile = $this->imponibile;
+        $iva = $this->iva;
 
 
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
-importo_commessa_traslocatore_destinazione)
+importo_commessa_traslocatore_destinazione, imponibile, iva)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -243,7 +248,8 @@ importo_commessa_traslocatore_destinazione)
          '$this->id_trasportatore', '$this->id_traslocatore_partenza', '$this->id_traslocatore_destinazione',
          '$data_sopraluogo', '$data_trasloco', '$id_agenzia',
          '$flag_sopraluogo', '$note', '$this->id_depositario',
-         '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione'
+         '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
+         '$imponibile','$iva'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -276,7 +282,9 @@ importo_commessa_traslocatore_destinazione)
           importo_commessa_depositario = '$this->importo_commessa_depositario',
           importo_commessa_traslocatore_partenza = '$this->importo_commessa_traslocatore_partenza',
           importo_commessa_traslocatore_destinazione = '$this->importo_commessa_traslocatore_destinazione',
-          id_agenzia = '$id_agenzia'
+          id_agenzia = '$id_agenzia',
+          imponibile = '$imponibile',
+          iva = '$iva'
           WHERE id_preventivo='$id_preventivo'
         ";
 
@@ -476,6 +484,8 @@ importo_commessa_traslocatore_destinazione)
             $this->importo_commessa_traslocatore_partenza = $row->importo_commessa_traslocatore_partenza;
             $this->importo_commessa_traslocatore_destinazione = $row->importo_commessa_traslocatore_destinazione;
             $this->id_cliente = $row->id_cliente;
+            $this->imponibile = $row->imponibile;
+            $this->iva = $row->iva;
 
             $found = true;
         }
@@ -1039,7 +1049,8 @@ importo_commessa_traslocatore_destinazione)
         //Rielabora
         $preventivatore = $this->getPreventivatore();
         $result = $preventivatore->elabora();
-
+        $imponibile = $result['prezzo_cliente_senza_iva'];
+        $iva = $result['prezzo_cliente_con_iva'] - $result['prezzo_cliente_senza_iva'];
         $importo_trasportatore = $result['costo_trazione'];
         $importo_depositario =  $result['deposito'];
         $importo_traslocatore_partenza =  $result['costo_servizio_smontaggio_imballo_carico'] + $result['costo_servizio_imballo_carico'];
@@ -1091,7 +1102,9 @@ importo_commessa_traslocatore_destinazione)
          importo_commessa_trasportatore ='".$totali[$this->id_trasportatore]."',
          importo_commessa_traslocatore_partenza ='".$totali[$this->id_traslocatore_partenza]."',
          importo_commessa_traslocatore_destinazione ='".$totali[$this->id_traslocatore_destinazione]."',
-         importo_commessa_depositario ='".$totali[$this->id_depositario]."'
+         importo_commessa_depositario ='".$totali[$this->id_depositario]."',
+         imponibile ='".$imponibile."',
+         iva ='".$iva."',
         WHERE id_preventivo=".$this->id_preventivo;
 
         $res = mysql_query($sql);
@@ -1100,5 +1113,10 @@ importo_commessa_traslocatore_destinazione)
         return new OrdineCliente($this->id_preventivo);
     }
 
+    public function setImponibile($imponibile) { $this->imponibile = $imponibile; }
+    public function setIva($iva) { $this->iva = $iva; }
+
+    public function getImponibile() { return $this->imponibile; }
+    public function getIva() { return $this->iva; }
 
 }

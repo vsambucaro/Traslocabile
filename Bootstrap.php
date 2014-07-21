@@ -36,3 +36,4 @@ require_once 'OrdineFornitore.php';
 require_once 'Pagamento.php';
 require_once 'Ordini.php';
 require_once 'Ordine.php';
+require_once 'Fatture.php';

@@ -429,6 +429,8 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
         $preventivo->setServiziAccessoriDestinazione($this->lista_servizi_destinazione);
         $preventivo->setImporto($this->prezzo_cliente_con_iva);
+        $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
+        $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
