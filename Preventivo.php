@@ -227,13 +227,13 @@ class Preventivo {
         $data_sopraluogo = $this->data_sopraluogo;
         $data_trasloco = $this->data_trasloco;
         $id_agenzia = $this->id_agenzia;
-        $flag_sopraluogo = $this->flag_sopralugo;
+        $flag_sopraluogo = $this->flag_sopraluogo;
         $note = $this->note;
 
 
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
-data_sopralluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
+data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
 importo_commessa_traslocatore_destinazione)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',

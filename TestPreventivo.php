@@ -42,7 +42,7 @@ class TestPreventivo {
         //var_dump($preventivatore);
 /*
         $preventivo->setStato("PROVA NUOVO STATO");
-        $preventivo->setDataSopralluogo("2014-07-10 10:00:00");
+        $preventivo->setDataSopraluogo("2014-07-10 10:00:00");
         $preventivo->setDataTrasloco("2014-07-12 07:00:00");
         $preventivo->setIdTrasportatore(55);
         $preventivo->setIdTraslocatoreDestinazione(100);
