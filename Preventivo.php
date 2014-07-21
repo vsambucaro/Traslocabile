@@ -24,7 +24,7 @@ class Preventivo {
 
     protected $id_preventivo;
     protected $data_preventivo;
-    protected $data_sopralluogo;
+    protected $data_sopraluogo;
     protected $data_trasloco;
 
     protected $id_trasportatore;
@@ -40,7 +40,7 @@ class Preventivo {
 
     protected $note;
     protected $flag_sopraluogo;
-    protected $data_sopraluogo;
+    //protected $data_sopraluogo;
 
     private $log;
 
@@ -224,7 +224,7 @@ class Preventivo {
         $cap_destinazione = $this->destinazione->cap;
         $indirizzo_destinazone = $this->destinazione->indirizzo;
 
-        $data_sopralluogo = $this->data_sopralluogo;
+        $data_sopraluogo = $this->data_sopraluogo;
         $data_trasloco = $this->data_trasloco;
         $id_agenzia = $this->id_agenzia;
         $flag_sopraluogo = $this->flag_sopralugo;
@@ -241,7 +241,7 @@ importo_commessa_traslocatore_destinazione)
          '$citta_destinazione', '$provincia_destinazione', '$indirizzo_destinazone',
          '$this->importo', '$this->stato', '$email_cliente',
          '$this->id_trasportatore', '$this->id_traslocatore_partenza', '$this->id_traslocatore_destinazione',
-         '$data_sopralluogo', '$data_trasloco', '$id_agenzia',
+         '$data_sopraluogo', '$data_trasloco', '$id_agenzia',
          '$flag_sopraluogo', '$note', '$this->id_depositario',
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione'
         )";
@@ -270,7 +270,7 @@ importo_commessa_traslocatore_destinazione)
           id_depositario = '$this->id_depositario',
           flag_sopraluogo = '$this->flag_sopraluogo',
           note = '$this->note',
-          data_sopralluogo = '$data_sopralluogo',
+          data_sopraluogo = '$data_sopraluogo',
           data_trasloco = '$data_trasloco',
           importo_commessa_trasportatore = '$this->importo_commessa_trasportatore',
           importo_commessa_depositario = '$this->importo_commessa_depositario',
@@ -461,7 +461,7 @@ importo_commessa_traslocatore_destinazione)
             $this->destinazione = new Indirizzo($row->destinazione_indirizzo, $row->destinazione_citta,
                 $row->destinazione_provincia, $row->destinazione_cap);
             $this->setStato($row->stato);
-            $this->data_sopralluogo = $row->data_sopralluogo;
+            $this->data_sopraluogo = $row->data_sopraluogo;
             $this->data_trasloco = $row->data_trasloco;
             $this->importo = $row->importo;
             $this->id_agenzia = $row->id_agenzia;
@@ -936,7 +936,7 @@ importo_commessa_traslocatore_destinazione)
         $preventivatore->setIndirizzoDestinazione($this->destinazione);
         $preventivatore->setGiorniDeposito($this->giorni_deposito);
         $preventivatore->setNote($this->note);
-        $preventivatore->setFlagSopraluogo($this->flag_sopralugo);
+        $preventivatore->setFlagSopraluogo($this->flag_sopraluogo);
 
         //$preventivatore->setCliente($this->customer); TODO
 
