@@ -32,6 +32,9 @@ class TestPreventivo {
         //$preventivo->setFlagSopraluogo(1);
         //$preventivo->save();
         echo "\nStato: ".$preventivo->getStato();
+        $preventivo->setDataSopraluogo("2014-08-01");
+        echo "\nDataSopralugo: ".$preventivo->getDataSopraluogo();
+
         //echo "\nFlag: ".$preventivo->getFlagSopraluogo();
 
         //$preventivatore = $preventivo->getPreventivatore();

@@ -40,6 +40,7 @@ class Preventivo {
 
     protected $note;
     protected $flag_sopraluogo;
+    protected $data_sopraluogo;
 
     private $log;
 

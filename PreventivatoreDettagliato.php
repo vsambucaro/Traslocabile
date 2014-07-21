@@ -432,6 +432,7 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
+        $preventivo->setDataSopraluogo($this->data_sopraluogo);
         $preventivo->save();
 
         return $preventivo;

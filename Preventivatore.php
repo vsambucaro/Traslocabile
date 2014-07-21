@@ -22,6 +22,7 @@ abstract class Preventivatore {
 
     protected $note;
     protected $flag_sopraluogo = 0;
+    protected $data_sopraluogo;
 
 
     protected $indirizzo_partenza;
@@ -79,6 +80,11 @@ abstract class Preventivatore {
     public function setFlagSopraluogo($flag)
     {
         $this->flag_sopraluogo = $flag;
+    }
+
+    public function setdataSopraluogo($data)
+    {
+        $this->data_sopraluogo = $data;
     }
 
     public function getNote() { return $this->note; }
