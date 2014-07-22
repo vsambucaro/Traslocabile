@@ -108,7 +108,7 @@ class PreventivatoreDettagliato extends Preventivatore
 
         $tmp_lista = array();
         foreach ($lista as $servizio) {
-            if ($servizio->getCampo[Servizio::ID]!=$id_servizio)
+            if ($servizio->getCampo(Servizio::ID)!=$id_servizio)
             {
                 $tmp_lista[] = $servizio;
             }
