@@ -115,9 +115,9 @@ class PreventivatoreDettagliato extends Preventivatore
         }
 
         if ($tipo == Servizio::SERVIZIO_PARTENZA)
-            $this->lista_servizi_partenza = $lista;
+            $this->lista_servizi_partenza = $tmp_lista;
         else
-            $this->lista_servizi_destinazione = $lista;
+            $this->lista_servizi_destinazione = $tmp_lista;
     }
 
     public function addServizioByItem(ServizioAccessoreAggravante $servizio, $tipo)
