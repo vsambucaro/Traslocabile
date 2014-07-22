@@ -113,6 +113,7 @@ class PreventivatoreIstantaneo extends Preventivatore
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
+        $preventivo->setDataTrasloco($this->data_trasloco);
 
         $preventivo->save();
 
