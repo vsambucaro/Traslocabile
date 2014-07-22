@@ -12,7 +12,7 @@ class ERP
     const FILTRO_PERIODO_AL="AL";
     private $log;
 
-    public function __contruct()
+    public function __construct()
     {
         $this->log = new KLogger('traslocabile.log',KLogger::DEBUG);
 
@@ -20,7 +20,7 @@ class ERP
     /**
      * Ritorna la lista delle fatture da ricevere dai vari fornitori
      */
-    public function getListaFattureDaRicevere($filtro_fornitori)
+    public function getListaFattureDaRicevere($filtro_fornitori = null)
     {
         $lista = array();
         $con = DBUtils::getConnection();
@@ -45,7 +45,7 @@ class ERP
     /**
      * Lista delle fattura da emettere verso i clienti che hanno chiesto fattura
      */
-    public function getListaFattureDaEmettere($filtro_cliente)
+    public function getListaFattureDaEmettere($filtro_cliente = null)
     {
         $lista = array();
         $con = DBUtils::getConnection();
@@ -70,7 +70,7 @@ class ERP
      * Ritorna il fatturato
      * @param $periodo array con il periodo
      */
-    public function getFatturato($periodo)
+    public function getFatturato($periodo = null)
     {
         $sql = "SELECT * FROM preventivi WHERE tipo=".OrdineCliente::TIPO_ORDINE;
 
@@ -105,30 +105,35 @@ class ERP
 
     }
 
-    public function getCosti($periodo)
+    public function getCosti($periodo = null)
     {
         $sql = "SELECT p.id_preventivo, o.importo FROM preventivi p , ordini_fornitori o WHERE p.tipo=".OrdineCliente::TIPO_ORDINE;
 
-
-        if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+        if ($periodo)
         {
-            $sql .=" AND p.data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
-        }
-        else
-        {
-            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
             {
-                $sql .= " AND p.data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
+                $sql .=" AND p.data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
             }
-            if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+            else
             {
-                $sql .= " AND p.data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+                {
+                    $sql .= " AND p.data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
+                }
+                if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+                {
+                    $sql .= " AND p.data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                }
             }
         }
 
-        $sql = " AND o.id_ordine = p.id_preventivo";
+        $sql .= " AND o.id_ordine = p.id_preventivo";
+
+
 
         $this->log->LogDebug("ERP.getCosti->SQL: ".$sql);
+
 
         $con = DBUtils::getConnection();
         $res = mysql_query($sql);
@@ -154,49 +159,53 @@ class ERP
 
         $first = true;
 
-        if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+        if ($periodo)
         {
-            if (!$first)
+
+            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
             {
-                $sql .= " AND ";
-                $first = false;
+                if (!$first)
+                {
+                    $sql .= " AND ";
+                    $first = false;
+                }
+                else
+                {
+                    $sql .= " WHERE ";
+                }
+                $sql .=" data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
             }
             else
             {
-                $sql .= " WHERE ";
-            }
-            $sql .=" data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
-        }
-        else
-        {
-            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
-            {
-                if (!$first)
+                if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
                 {
-                    $sql .= " AND ";
-                    $first = false;
-                }
-                else
-                {
-                    $sql .= " WHERE ";
-                }
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
 
-                $sql .= " data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
-            }
-            if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
-            {
-                if (!$first)
-                {
-                    $sql .= " AND ";
-                    $first = false;
+                    $sql .= " data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
                 }
-                else
+                if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
                 {
-                    $sql .= " WHERE ";
-                }
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
 
 
-                $sql .= " data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                    $sql .= " data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                }
             }
         }
 
@@ -218,55 +227,59 @@ class ERP
      * Ritorna la lista di tutti i pgamenti effettuati
      * @param $periodo
      */
-    public function getUscite($periodo)
+    public function getUscite($periodo = null)
     {
         $sql = "SELECT * FROM pagamenti_fornitori ";
 
         $first = true;
 
-        if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+        if ($periodo)
         {
-            if (!$first)
+
+            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
             {
-                $sql .= " AND ";
-                $first = false;
+                if (!$first)
+                {
+                    $sql .= " AND ";
+                    $first = false;
+                }
+                else
+                {
+                    $sql .= " WHERE ";
+                }
+                $sql .=" data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
             }
             else
             {
-                $sql .= " WHERE ";
-            }
-            $sql .=" data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
-        }
-        else
-        {
-            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
-            {
-                if (!$first)
+                if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
                 {
-                    $sql .= " AND ";
-                    $first = false;
-                }
-                else
-                {
-                    $sql .= " WHERE ";
-                }
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
 
-                $sql .= " data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
-            }
-            if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
-            {
-                if (!$first)
-                {
-                    $sql .= " AND ";
-                    $first = false;
+                    $sql .= " data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
                 }
-                else
+                if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
                 {
-                    $sql .= " WHERE ";
-                }
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
 
 
-                $sql .= " data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                    $sql .= " data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                }
             }
         }
 
@@ -285,11 +298,6 @@ class ERP
     }
 
     public function getFattura()
-    {
-
-    }
-
-    public function generaFattura($id_ordine)
     {
 
     }

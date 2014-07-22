@@ -24,6 +24,7 @@ abstract class Preventivatore {
     protected $flag_sopraluogo = 0;
     protected $data_sopraluogo;
 
+    protected $data_trasloco; //TODO
 
     protected $indirizzo_partenza;
     protected $indirizzo_destinazione;
@@ -82,13 +83,16 @@ abstract class Preventivatore {
         $this->flag_sopraluogo = $flag;
     }
 
-    public function setdataSopraluogo($data)
+    public function setDataSopraluogo($data)
     {
         $this->data_sopraluogo = $data;
     }
 
     public function getNote() { return $this->note; }
     public function getFlagSopraluogo() { return $this->flag_sopraluogo; }
+
+    public function setDataTrasloco($data) { $this->data_trasloco = $data; }
+    public function getDataTrasloco() { return $this->data_trasloco; }
 
 
 } 
