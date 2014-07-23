@@ -93,6 +93,7 @@ class ERP
 
         $con = DBUtils::getConnection();
         $res = mysql_query($sql);
+        $this->log->LogDebug("Query Fatturato: ".$sql);
 
         $fatturato  = 0;
 
@@ -302,5 +303,72 @@ class ERP
 
     }
 
+
+    public function getListaOrdiniFornitori($periodo = null)
+    {
+        $lista = array();
+        $con = DBUtils::getConnection();
+        $sql = "SELECT * FROM ordini_fornitori";
+
+        $first = true;
+
+        if ($periodo)
+        {
+
+            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+            {
+                if ($first)
+                {
+                    $sql .= " WHERE ";
+                }
+                $sql .=" data_ordine BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+            }
+            else
+            {
+                if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+                {
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
+
+                    $sql .= " data_ordine>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
+                }
+                if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+                {
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
+
+
+                    $sql .= " data_ordine<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                }
+            }
+        }
+
+        $res = mysql_query($sql);
+        while ($row = mysql_fetch_object($res))
+        {
+
+            $lista[] = array('id_fornitore'=>$row->id_fornitore,
+                'id_preventivo'=>$row->id_preventivo,
+                'importo'=>$row->importo,
+                'data_ordine'=>$row->data_ordine);
+        }
+
+        DBUtils::closeConnection($con);
+        return $lista;
+    }
 
 } 
