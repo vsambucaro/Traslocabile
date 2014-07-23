@@ -362,7 +362,7 @@ class ERP
         {
 
             $lista[] = array('id_fornitore'=>$row->id_fornitore,
-                'id_preventivo'=>$row->id_preventivo,
+                'id_ordine'=>$row->id_ordine,
                 'importo'=>$row->importo,
                 'data_ordine'=>$row->data_ordine);
         }
