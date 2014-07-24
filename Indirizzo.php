@@ -12,13 +12,17 @@ class Indirizzo {
     public $citta;
     public $provincia;
     public $cap;
+    public $codice_citta;
+    public $codice_provincia;
 
-    public function __construct( $indirizzo, $citta, $provincia, $cap )
+    public function __construct( $indirizzo, $citta, $provincia, $cap , $codice_citta = null, $codice_provincia = null)
     {
         $this->indirizzo = $indirizzo;
         $this->citta = $citta;
         $this->provincia = $provincia;
         $this->cap = $cap;
+        $this->codice_citta = $codice_citta;
+        $this->codice_provincia = $codice_provincia;
     }
 
     public function toGoogleAddress()
@@ -46,6 +50,5 @@ class Indirizzo {
         $ret = substr($ret,0, strlen($ret)-1);
 
         return $ret;
-
     }
 } 

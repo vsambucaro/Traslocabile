@@ -38,3 +38,4 @@ require_once 'Ordini.php';
 require_once 'Ordine.php';
 require_once 'Fatture.php';
 require_once 'ERP.php';
+require_once 'TariffeClientiBusiness.php';

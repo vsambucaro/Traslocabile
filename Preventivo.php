@@ -221,11 +221,17 @@ class Preventivo {
         $provincia_partenza = $this->partenza->provincia;
         $cap_partenza = $this->partenza->cap;
         $indirizzo_partenza = $this->partenza->indirizzo;
+        $partenza_codice_citta = $this->partenza->codice_citta;
+        $partenza_codice_provincia = $this->partenza->codice_provincia;
+
 
         $citta_destinazione = $this->destinazione->citta;
         $provincia_destinazione = $this->destinazione->provincia;
         $cap_destinazione = $this->destinazione->cap;
         $indirizzo_destinazone = $this->destinazione->indirizzo;
+
+        $destinazione_codice_citta = $this->destinazione->codice_citta;
+        $destinazione_codice_provincia = $this->destinazione->codice_provincia;
 
         $data_sopraluogo = $this->data_sopraluogo;
         $data_trasloco = $this->data_trasloco;
@@ -239,7 +245,8 @@ class Preventivo {
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
-importo_commessa_traslocatore_destinazione, imponibile, iva)
+importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
+destinazione_codice_provincia, destinazione_codice_citta)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -249,7 +256,9 @@ importo_commessa_traslocatore_destinazione, imponibile, iva)
          '$data_sopraluogo', '$data_trasloco', '$id_agenzia',
          '$flag_sopraluogo', '$note', '$this->id_depositario',
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
-         '$imponibile','$iva'
+         '$imponibile','$iva',
+         '$partenza_codice_citta', '$partenza_codice_provincia',
+         '$destinazione_codice_provincia', '$destinazione_codice_citta'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -284,7 +293,11 @@ importo_commessa_traslocatore_destinazione, imponibile, iva)
           importo_commessa_traslocatore_destinazione = '$this->importo_commessa_traslocatore_destinazione',
           id_agenzia = '$id_agenzia',
           imponibile = '$imponibile',
-          iva = '$iva'
+          iva = '$iva',
+          partenza_codice_citta = '$partenza_codice_citta',
+          partenza_codice_provincia = '$partenza_codice_provincia',
+          destinazione_codice_citta = '$destinazione_codice_citta',
+          destinazione_codice_provincia = '$destinazione_codice_provincia'
           WHERE id_preventivo='$id_preventivo'
         ";
 
@@ -465,9 +478,9 @@ importo_commessa_traslocatore_destinazione, imponibile, iva)
             $this->data_preventivo = $row->data;
             $this->customer = new Customer($row->id_cliente, $row->email_cliente);
             $this->partenza = new Indirizzo($row->partenza_indirizzo, $row->partenza_citta,
-                $row->partenza_provincia, $row->partenza_cap);
+                $row->partenza_provincia, $row->partenza_cap, $row->partenza_codice_citta, $row->partenza_codice_provincia);
             $this->destinazione = new Indirizzo($row->destinazione_indirizzo, $row->destinazione_citta,
-                $row->destinazione_provincia, $row->destinazione_cap);
+                $row->destinazione_provincia, $row->destinazione_cap, $row->destinazione_codice_citta, $row->destinazione_codice_provincia);
             $this->setStato($row->stato);
             $this->data_sopraluogo = $row->data_sopraluogo;
             $this->data_trasloco = $row->data_trasloco;

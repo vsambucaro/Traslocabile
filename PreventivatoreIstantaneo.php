@@ -108,6 +108,7 @@ class PreventivatoreIstantaneo extends Preventivatore
         $preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setArredi($this->lista_arredi);
         $preventivo->setServiziIstantaneo($this->lista_servizi);
+        $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
         $preventivo->setImporto($this->prezzo_cliente_con_iva);
         $preventivo->setStato($this->stato);
         $preventivo->setStato($this->stato);
