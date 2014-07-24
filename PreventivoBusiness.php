@@ -6,51 +6,52 @@
  * Time: 5:29 PM
  */
 
-class Preventivo {
+class PreventivoBusiness {
 
     const TIPO_PREVENTIVO=0;
-    protected  $customer;
+    private  $customer;
 
-    protected  $partenza;
-    protected  $destinazione;
+    private  $partenza;
+    private  $destinazione;
 
-    private $lista_arredi;
+    private $lista_item;
     private $lista_servizi_accessori_partenza;
-    protected $lista_servizi_accessori_destinazione;
-    protected $lista_servizi_istantaneo;
+    private $lista_servizi_accessori_destinazione;
+    private $lista_servizi_istantaneo;
 
-    protected $stato;
-    protected $importo;
+    private $stato;
+    private $importo;
 
-    protected $id_preventivo;
-    protected $data_preventivo;
-    protected $data_sopraluogo;
-    protected $data_trasloco;
+    private $id_preventivo;
+    private $data_preventivo;
+    private $data_sopraluogo;
+    private $data_trasloco;
 
-    protected $id_trasportatore;
-    protected $id_traslocatore_partenza;
-    protected $id_traslocatore_destinazione;
-    protected $id_depositario;
+    private $id_trasportatore;
+    private $id_traslocatore_partenza;
+    private $id_traslocatore_destinazione;
+    private $id_depositario;
 
-    protected $id_cliente;
-    protected $id_agenzia;
+    private $id_cliente;
+    private $id_agenzia;
 
-    protected $giorni_deposito;
-    protected $lista_voci_extra;
+    private $giorni_deposito;
+    private $lista_voci_extra;
 
-    protected $note;
-    protected $flag_sopraluogo;
+    private $note;
+    private  $flag_sopraluogo;
     //protected $data_sopraluogo;
 
     private $log;
 
-    protected $importo_commessa_trasportatore;
-    protected $importo_commessa_depositario;
-    protected $importo_commessa_traslocatore_partenza;
-    protected $importo_commessa_traslocatore_destinazione;
+    private $importo_commessa_trasportatore;
+    private $importo_commessa_depositario;
+    private $importo_commessa_traslocatore_partenza;
+    private $importo_commessa_traslocatore_destinazione;
 
-    protected $imponibile;
-    protected $iva;
+    private $imponibile;
+    private $iva;
+    private $mc;
 
     public function __construct()
     {
@@ -85,9 +86,9 @@ class Preventivo {
 
     }
 
-    public function setArredi($lista_arredi)
+    public function setItems($lista)
     {
-        $this->lista_arredi = $lista_arredi;
+        $this->lista_item = $lista;
     }
 
 
@@ -163,7 +164,7 @@ class Preventivo {
             $id_preventivo = $this->_savePreventivo();
         }
 
-        $this->_saveArrediPreventivo($id_preventivo);
+        $this->_saveItems($id_preventivo);
         $this->_saveServiziIstantaneo($id_preventivo);
 
         $this->_saveServiziAccessiPartenza($id_preventivo);
@@ -184,7 +185,7 @@ class Preventivo {
         $sql = "DELETE FORM preventivi WHERE id_preventivo=".$id_preventivo;
         $res = mysql_query($sql);
 
-        $sql ="DELETE FROM arredi_preventivo WHERE id_preventivo=".$id_preventivo;
+        $sql ="DELETE FROM items_preventivo WHERE id_preventivo=".$id_preventivo;
         $res = mysql_query($sql);
 
         $sql ="DELETE FROM parametri_arredi_preventivo WHERE id_preventivo=".$id_preventivo;
@@ -209,6 +210,7 @@ class Preventivo {
 
     //crea il record preventivo e ritorna l'ID del preventivo
     private function _savePreventivo($id_preventivo = null) {
+
         $con = DBUtils::getConnection();
         $data = date('Y-m-d');
         $id_cliente = $this->id_cliente;
@@ -246,7 +248,7 @@ class Preventivo {
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
-destinazione_codice_provincia, destinazione_codice_citta)
+destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -258,7 +260,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
          '$imponibile','$iva',
          '$partenza_codice_citta', '$partenza_codice_provincia',
-         '$destinazione_codice_provincia', '$destinazione_codice_citta'
+         '$destinazione_codice_provincia', '$destinazione_codice_citta', '1','$this->mc'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -297,13 +299,16 @@ destinazione_codice_provincia, destinazione_codice_citta)
           partenza_codice_citta = '$partenza_codice_citta',
           partenza_codice_provincia = '$partenza_codice_provincia',
           destinazione_codice_citta = '$destinazione_codice_citta',
-          destinazione_codice_provincia = '$destinazione_codice_provincia'
+          destinazione_codice_provincia = '$destinazione_codice_provincia',
+          tipologia_cliente='1',
+          mc='$this->mc'
           WHERE id_preventivo='$id_preventivo'
         ";
 
         }
 
         $res = mysql_query($sql);
+
         if (!$res) {
             die ("ERRORE: ".$sql);
         }
@@ -314,41 +319,21 @@ destinazione_codice_provincia, destinazione_codice_citta)
         return $id_preventivo;
     }
 
-    private function _saveArrediPreventivo($id_preventivo)
+    private function _saveItems($id_preventivo)
     {
         $con = DBUtils::getConnection();
-        if ($this->lista_arredi)
-        foreach ($this->lista_arredi as $arredo) {
-            $id_arredo = $arredo->getCampo(Arredo::ID);
-            $qta = $arredo->getQta();
-            $dim_A = $arredo->getCampo(Arredo::DIM_A);
-            $dim_L = $arredo->getCampo(Arredo::DIM_L);
-            $dim_P = $arredo->getCampo(Arredo::DIM_P);
-            $sql ="INSERT INTO arredi_preventivo (id_arredo, id_preventivo, qta, dim_A, dim_P, dim_L)
-             VALUES ('$id_arredo', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L')";
-
+        if ($this->lista_item)
+        foreach ($this->lista_item as $item) {
+            //print_r($item);
+            $descrizione = $item->descrizione;
+            $qta = $item->qta;
+            $dim_A = $item->altezza;
+            $dim_L = $item->lunghezza;
+            $dim_P = $item->profondita;
+            $mc = $item->mc;
+            $sql ="INSERT INTO items_preventivo (descrizione, id_preventivo, qta, dim_A, dim_P, dim_L , mc)
+             VALUES ('$descrizione', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L', '$mc')";
             $res = mysql_query($sql);
-            $id_arredi_preventivo = mysql_insert_id();
-            $parametro = '';
-            $valore = '';
-            foreach ($arredo->getListaPartiVariabili() as $key=>$value)
-            {
-                $parametro = $key;
-                $valore = $arredo->getParteVariabile($parametro);
-
-            }
-
-            $parametro_B = $arredo->getParametroB();
-
-            //echo "\nParametro:".$parametro.", valore: ".$valore;
-            //echo "\nParametro_B:".$parametro_B;
-
-            if ($valore || $parametro_B)
-            {
-                $sql = "INSERT INTO parametri_arredi_preventivo (id_arredi_preventivo, id_arredo, id_preventivo, parametro, valore, parametro_b)
-                 VALUES ('$id_arredi_preventivo', '$id_arredo', '$id_preventivo', '$parametro', '$valore', '$parametro_B')";
-                $res = mysql_query($sql);
-            }
         }
 
         DBUtils::closeConnection($con);
@@ -445,7 +430,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
     {
         //echo "\nInizio Caricamento ";
         $found = $this->_loadPreventivo($id_preventivo);
-        $this->_loadArrediPreventivo($id_preventivo);
+        $this->_loadItems($id_preventivo);
         $this->_loadServiziIstantaneoPreventivo($id_preventivo);
 
         //echo "\nCaricamento Preventivo OK";
@@ -457,7 +442,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
     {
         //echo "\nInizio Caricamento ";
         $found = $this->_loadPreventivo($id_preventivo);
-        $this->_loadArrediPreventivoDettaglio($id_preventivo);
+        $this->_loadItems($id_preventivo);
         $this->_loadServiziDettaglio($id_preventivo);
         $this->_loadDeposito($id_preventivo);
         $this->_loadVociPreventivoExtra($id_preventivo);
@@ -499,6 +484,8 @@ destinazione_codice_provincia, destinazione_codice_citta)
             $this->id_cliente = $row->id_cliente;
             $this->imponibile = $row->imponibile;
             $this->iva = $row->iva;
+            $this->mc = $row->mc;
+
 
             $found = true;
         }
@@ -528,90 +515,28 @@ destinazione_codice_provincia, destinazione_codice_citta)
         return $found;
     }
 
-    private function _loadArrediPreventivo($id_preventivo) {
+    private function _loadItems($id_preventivo) {
         $con = DBUtils::getConnection();
-        $sql ="SELECT * FROM arredi_preventivo WHERE id_preventivo=$id_preventivo";
+        $sql ="SELECT * FROM items_preventivo WHERE id_preventivo=$id_preventivo";
         $res = mysql_query($sql);
-        $found = 0;
+        $found = false;
         while ($row=mysql_fetch_object($res))
         {
             //crea l'oggetto Arredo
-            $arredo = new ArredoIstantaneo($row->id_arredo);
-            $arredo->setIdRiga($row->id);
-            $arredo->setQta($row->qta);
-            //$arredo->setCampo(Arredo::DIM_A,$row->dim_A);
-            //$arredo->setCampo(Arredo::DIM_P,$row->dim_P);
-            //$arredo->setCampo(Arredo::DIM_L,$row->dim_L);
-            $this->lista_arredi[] = $arredo;
+            $item = new ItemPreventivatoreBusiness($row->descrizione);
+            $item->lunghezza = $row->dim_L;
+            $item->altezza = $row->dim_A;
+            $item->profondita = $row->dim_P;
+            $item->qta = $row->qta;
+            $item->mc = $row->mc;
+            $this->lista_item[] = $item;
             $found = true;
         }
 
         DBUtils::closeConnection($con);
-        if ($this->lista_arredi)
-            foreach ($this->lista_arredi  as $arredo) {
-                $this->_getPartiVariabili($arredo, $id_preventivo, $arredo->getIdRiga());
-            }
         return $found;
     }
 
-    private function _loadArrediPreventivoDettaglio($id_preventivo) {
-        $con = DBUtils::getConnection();
-        $sql ="SELECT * FROM arredi_preventivo WHERE id_preventivo=$id_preventivo ORDER BY ID ASC";
-        $res = mysql_query($sql);
-        $found = 0;
-        while ($row=mysql_fetch_object($res))
-        {
-            //crea l'oggetto Arredo
-            $arredo = new ArredoDettagliato($row->id_arredo);
-            //echo "\nrow->id:".$row->id;
-            $arredo->setIdRiga($row->id);
-            $arredo->setQta($row->qta);
-            if (($row->dim_A) && ($row->dim_A>0))
-                $arredo->setCampo(Arredo::DIM_A,$row->dim_A);
-
-            if (($row->dim_P) && ($row->dim_P>0))
-                $arredo->setCampo(Arredo::DIM_P,$row->dim_P);
-
-            if (($row->dim_L) && ($row->dim_L>0))
-                $arredo->setCampo(Arredo::DIM_L,$row->dim_L);
-
-            $this->lista_arredi[] = $arredo;
-            $found = true;
-        }
-
-        DBUtils::closeConnection($con);
-        if ($this->lista_arredi)
-            foreach ($this->lista_arredi  as $arredo) {
-                $this->_getPartiVariabili($arredo, $id_preventivo, $arredo->getIdRiga());
-            }
-
-        return $found;
-    }
-
-    private function _getPartiVariabili($arredo, $id_preventivo, $id_arredi_preventivo)
-    {
-        $con = DBUtils::getConnection();
-        $id_arredo = $arredo->getCampo(Arredo::ID);
-        $sql_pv = "SELECT * FROM parametri_arredi_preventivo WHERE id_preventivo=$id_preventivo AND id_arredo=$id_arredo AND id_arredi_preventivo=$id_arredi_preventivo";
-        $res_pv = mysql_query($sql_pv);
-        while ($row_pv = mysql_fetch_object($res_pv))
-        {
-            //aggiunge le parti varibili per il calcolo dei mc
-
-            if ($row_pv->parametro)
-            {
-                $arredo->setParteVariabile(strtoupper($row_pv->parametro), $row_pv->valore);
-            }
-
-            if ($row_pv->parametro_B)
-            {
-                $arredo->setParametroB($row_pv->parametro_B);
-            }
-
-
-        }
-        DBUtils::closeConnection($con);
-    }
 
     private function _loadServiziIstantaneoPreventivo($id_preventivo) {
         $con = DBUtils::getConnection();
@@ -670,9 +595,9 @@ destinazione_codice_provincia, destinazione_codice_citta)
 
 
 
-    public function getListaArredi()
+    public function getItems()
     {
-        return $this->lista_arredi;
+        return $this->lista_item;
     }
 
     public function getCliente()
@@ -929,13 +854,12 @@ destinazione_codice_provincia, destinazione_codice_citta)
     public function getPreventivatore()
     {
 
-        $preventivatore = new PreventivatoreDettagliato();
+        $preventivatore = new PreventivatoreBusiness();
 
         //carica gli arredi
-        if ($this->lista_arredi)
-            foreach ($this->lista_arredi as $arredo)
-                $preventivatore->addArredoByItem($arredo); // in questo caso facendo il load dal preventivo, l'oggetto Arredo è già popolato
-                //$preventivatore->addArredoById($arredo->getCampo(Arredo::ID)); // in questo caso facendo il load dal preventivo, l'oggetto Arredo è già popolato
+        if ($this->lista_item)
+            foreach ($this->lista_item as $item)
+                $preventivatore->addItem($item);
 
         //carica i servizi
         if ($this->lista_servizi_accessori_partenza)
@@ -986,10 +910,6 @@ destinazione_codice_provincia, destinazione_codice_citta)
     public function getImportoCommessaTraslocatoreDestinazione() { return $this->importo_commessa_traslocatore_destinazione;}
     public function getProvvigioneAgenzia() { return $this->importo_commessa_trasportatore * Parametri::getProvvigioneAgenzia();}
 
-    public function getListaAttori()
-    {
-        //TODO
-    }
 
 
     public function getStatoAccettazioneOperatori()
@@ -1066,8 +986,8 @@ destinazione_codice_provincia, destinazione_codice_citta)
         $iva = $result['prezzo_cliente_con_iva'] - $result['prezzo_cliente_senza_iva'];
         $importo_trasportatore = $result['costo_trazione'];
         $importo_depositario =  $result['deposito'];
-        $importo_traslocatore_partenza =  $result['costo_servizio_smontaggio_imballo_carico'] + $result['costo_servizio_imballo_carico'];
-        $importo_traslocatore_destinazione =  $result['costo_servizio_scarico'] + $result['costo_servizio_salita'] + $result['costo_servizio_montaggio'];
+        $importo_traslocatore_partenza =  $result['costo_scarico_totale'] ;
+        $importo_traslocatore_destinazione =  $result['costo_salita_piano_totale'] + $result['costo_montaggio_totale'] + $result['costo_scarico_ricarico_hub_totale'];
 
         $totali = array();
         $totali[$this->id_trasportatore] = 0;
@@ -1088,12 +1008,12 @@ destinazione_codice_provincia, destinazione_codice_citta)
         $totali[$this->id_traslocatore_destinazione] = $totali[$this->id_traslocatore_destinazione] + $importo_traslocatore_destinazione;
 
 
-        $mc = $preventivatore->getDettaglioMC();
+        $mc = $preventivatore->getMC();
 
-        $totaliMC[$this->id_trasportatore] = $totaliMC[$this->id_trasportatore] + $mc['mc_da_trasportare'];
-        $totaliMC[$this->id_depositario] = $totaliMC[$this->id_depositario] + $mc['mc_da_trasportare'];
-        $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc['mc_smontaggio'] + $mc['mc_no_smontaggio'];
-        $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
+        $totaliMC[$this->id_trasportatore] = $totaliMC[$this->id_trasportatore] + $mc;
+        $totaliMC[$this->id_depositario] = $totaliMC[$this->id_depositario] + $mc;
+        $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc;
+        $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc;
 
         $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'));
         $ordine_trasportatore->save();
@@ -1104,11 +1024,9 @@ destinazione_codice_provincia, destinazione_codice_citta)
         $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'));
         $ordine_traslocatore_destinazione->save();
 
-        if ($this->giorni_deposito> 10)
-        {
+        if ($this->giorni_deposito>10) {
             $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'));
             $ordine_depositario->save();
-
         }
 
 
@@ -1125,6 +1043,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
         WHERE id_preventivo=".$this->id_preventivo;
 
         $res = mysql_query($sql);
+        //echo "\nSQL: ".$sql;
         DBUtils::closeConnection($con);
 
         return new OrdineCliente($this->id_preventivo);
@@ -1135,5 +1054,8 @@ destinazione_codice_provincia, destinazione_codice_citta)
 
     public function getImponibile() { return $this->imponibile; }
     public function getIva() { return $this->iva; }
+
+    public function setMC($mc) { $this->mc = $mc; }
+    public function getMC() { return $this->mc; }
 
 }

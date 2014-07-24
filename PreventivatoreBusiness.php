@@ -15,12 +15,24 @@ class PreventivatoreBusiness {
     private $sconto = 0;
     private $tipo_algoritmo;
     private $km = 0;
+    private $stato = '';
 
     private $lista_servizi_partenza = array();
     private $lista_servizi_destinazione = array();
-    protected $indirizzo_partenza;
-    protected $indirizzo_destinazione;
+    private $indirizzo_partenza;
+    private $indirizzo_destinazione;
     private $lista_voci_extra = array();
+
+    private $giorni_deposito=0;
+    private $note;
+    private  $flag_sopraluogo = 0;
+    private  $data_sopraluogo;
+    private  $data_trasloco; //TODO
+
+    private  $prezzo_cliente_senza_iva = 0;
+    private $prezzo_cliente_con_iva = 0;
+    private $mc;
+
 
 
     public function setIndirizzoPartenza(Indirizzo $indirizzo)
@@ -38,7 +50,7 @@ class PreventivatoreBusiness {
     public function addItem(ItemPreventivatoreBusiness $item)
     {
         if ($item->mc == 0) {
-            $item->mc = $item->altezza * $item->lunghezza * $item->profondità;
+            $item->mc = $item->altezza * $item->lunghezza * $item->profondita;
         }
 
         $this->lista_item[] = $item;
@@ -55,16 +67,34 @@ class PreventivatoreBusiness {
 
     public function setSconto($sconto) { $this->sconto = $sconto; }
 
+    private function _getCostoServizioDeposito($mc, $giorni , $tipo_costo = PreventivatoreDettagliato::COSTO_CLIENTE)
+    {
+        $tariffa = ParametriServizio::getParametro(ParametriServizio::TARIFFA_DEPOSITO);
+        if ($tipo_costo == PreventivatoreDettagliato::COSTO_CLIENTE)
+            $costo = $mc * $tariffa['prezzo'] * $giorni;
+        else
+            $costo =$mc * $tariffa['tariffa_operatore'] * $giorni;
+
+        return $costo;
+    }
+
     public function elabora()
     {
         $mc_mese = $this->getMCMese(date('Y'));
 
         $mc_attuali = $this->getMC();
-        $costo_scarico_ricarico_hub = TariffeClienteBusiness::getCostoScaricoRicaricoHub($mc_mese, $this->tipo_algoritmo);
-        $costo_trazione = TariffeClienteBusiness::getCostoTrazione($mc_mese, $this->km, $this->tipo_algoritmo);
-        $costo_scarico = TariffeClienteBusiness::getCostoScarico($mc_mese, $this->tipo_algoritmo);
-        $costo_salita_piano = TariffeClienteBusiness::getCostoSalitaPiano($mc_mese, $this->tipo_algoritmo);
-        $costo_montaggio = TariffeClienteBusiness::getCostoMontaggio($mc_mese, $this->tipo_algoritmo);
+        $this->mc = $mc_attuali;
+        //calcola KM
+        $calcolatoreDistanza = new CalcolatoreDistanza();
+        $info = $calcolatoreDistanza->getDrivingInformationV2($this->indirizzo_partenza->toGoogleAddress(),
+            $this->indirizzo_destinazione->toGoogleAddress());
+        $this->setKM($info['distance']);
+
+        $costo_scarico_ricarico_hub = TariffeClientiBusiness::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_trazione = TariffeClientiBusiness::getCostoTrazione($mc_mese,  $this->km, $mc_attuali, $this->tipo_algoritmo);
+        $costo_scarico = TariffeClientiBusiness::getCostoScarico($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_salita_piano = TariffeClientiBusiness::getCostoSalitaPiano($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_montaggio = TariffeClientiBusiness::getCostoMontaggio($mc_mese, $mc_attuali, $this->tipo_algoritmo);
 
         $valore_voci_extra  = 0;
         foreach ($this->lista_voci_extra as $voce) {
@@ -81,18 +111,41 @@ class PreventivatoreBusiness {
             $costo_scarico_totale = $costo_scarico * $mc_attuali;
             $costo_trazione_totale = $costo_trazione * $mc_attuali;
             $costo_scarico_ricarico_hub_totale = $costo_scarico_ricarico_hub * $mc_attuali;
+            $deposito = $this->_getCostoServizioDeposito($mc_attuali, $this->giorni_deposito);
 
             $costo_servizi = $costo_montaggio_totale + $costo_salita_piano_totale + $costo_scarico_totale +
-                $costo_trazione_totale + $costo_scarico_ricarico_hub_totale;
+                $costo_trazione_totale + $costo_scarico_ricarico_hub_totale + $deposito;
 
             //Aggiungi le aggravanti
             $costo_servizi_accessori_partenza = $this->_getCostoServiziAccessoriPartenza($costo_servizi);
             $costo_servizi_accessori_destinazione = $this->_getCostoServiziAccessoriDestinazione($costo_servizi);
 
-            $costo_complessivo = $costo_servizi + $costo_servizi_accessori_partenza + $costo_servizi_accessori_destinazione
+            $costo_complessivo = $costo_servizi + + $costo_servizi_accessori_partenza['valore_percentuale'] +
+                $costo_servizi_accessori_partenza['valore_assoluto'] +
+                $costo_servizi_accessori_destinazione['valore_percentuale'] +
+                $costo_servizi_accessori_destinazione['valore_assoluto'] +
                 + $valore_voci_extra;
+
             $prezzo_cliente = $costo_complessivo * (1- $this->sconto/100);
-            return $prezzo_cliente;
+
+            $prezzo_cliente_con_iva = $prezzo_cliente * (1 + Parametri::getIVA());
+
+            $result = array('costo_montaggio_totale'=>$costo_montaggio_totale,
+                'costo_salita_piano_totale'=>$costo_salita_piano_totale,
+                'costo_scarico_totale'=>$costo_scarico_totale,
+                'deposito'=>$deposito,
+                'costo_trazione'=>$costo_trazione_totale,
+                'costo_scarico_ricarico_hub_totale'=>$costo_scarico_ricarico_hub_totale,
+                'costo_servizi_accessori_partenza'=>$costo_servizi_accessori_partenza,
+                'costo_servizi_accessori_destinazione'=>$costo_servizi_accessori_destinazione,
+                'prezzo_cliente_senza_iva'=>$prezzo_cliente,
+                'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva
+            );
+
+            $this->prezzo_cliente_con_iva = $prezzo_cliente_con_iva;
+            $this->prezzo_cliente_senza_iva = $prezzo_cliente;
+            return $result;
+
         }
 
         return 0;
@@ -143,6 +196,7 @@ class PreventivatoreBusiness {
         else
             $this->lista_servizi_destinazione[] = $servizio;
     }
+
     public function getMC()
     {
         $mc = 0;
@@ -154,8 +208,9 @@ class PreventivatoreBusiness {
 
     private function getMCMese($mese)
     {
-
+        return 0;
     }
+
 
     public function setKM($km) { $this->km = $km; }
     public function getKM() { return $this->km; }
@@ -235,5 +290,80 @@ class PreventivatoreBusiness {
         return $this->lista_servizi_destinazione ;
     }
 
+    public function setGiorniDeposito($numero_giorni) { $this->giorni_deposito = $numero_giorni; }
+    public function getGiorniDeposito() { return $this->giorni_deposito; }
 
+    public function setNote($note)
+    {
+        $this->note = $note;
+    }
+
+    public function setFlagSopraluogo($flag)
+    {
+        $this->flag_sopraluogo = $flag;
+    }
+
+    public function setDataSopraluogo($data)
+    {
+        $this->data_sopraluogo = $data;
+    }
+
+    public function getNote() { return $this->note; }
+    public function getFlagSopraluogo() { return $this->flag_sopraluogo; }
+
+    public function setDataTrasloco($data) { $this->data_trasloco = $data; }
+    public function getDataTrasloco() { return $this->data_trasloco; }
+
+    /**
+     * Salva il preventivo
+     */
+    public function save(Customer $customer = null) {
+        $preventivo = new PreventivoBusiness();
+        if ($customer)
+            $preventivo->setCliente($customer);
+        $preventivo->setPartenza($this->indirizzo_partenza);
+        $preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setItems($this->lista_item);
+        $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
+        $preventivo->setServiziAccessoriDestinazione($this->lista_servizi_destinazione);
+        $preventivo->setImporto($this->prezzo_cliente_con_iva);
+        $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
+        $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
+        $preventivo->setStato($this->stato);
+        $preventivo->setNote($this->note);
+        $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
+        $preventivo->setDataSopraluogo($this->data_sopraluogo);
+        $preventivo->setMC($this->mc);
+        $preventivo->save();
+
+        return $preventivo;
+    }
+
+    /**
+     * Metodo da richiamare quando si modifica un item del preventivatore e si vuola anche aggiornare il preventivo stesso
+     * @param $preventivo oggetto da aggiornare
+     */
+    public function updatePreventivo(PreventivoBusiness $preventivo)
+    {
+        //$preventivo->setPartenza($this->indirizzo_partenza);
+        //$preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setItems($this->lista_item);
+        $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
+        $preventivo->setServiziAccessoriDestinazione($this->lista_servizi_destinazione);
+        $preventivo->setListaVociExtra($this->lista_voci_extra);
+        $preventivo->setPartenza($this->indirizzo_partenza);
+        $preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setMC($this->mc);
+        //$preventivo->setImporto($this->prezzo_cliente_con_iva);
+        //$preventivo->setStato($this->stato);
+        //$preventivo->save();
+    }
+
+    public function setCustomer($id_preventivo, Customer $customer)
+    {
+        $preventivo = new Preventivo();
+        $preventivo->load($id_preventivo);
+        $preventivo->setCliente($customer);
+        $preventivo->save();
+    }
 } 
