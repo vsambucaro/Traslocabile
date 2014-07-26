@@ -25,6 +25,7 @@ class PreventivatoreBusiness {
 
     private $giorni_deposito=0;
     private $note;
+    protected $note_interne;
     private  $flag_sopraluogo = 0;
     private  $data_sopraluogo;
     private  $data_trasloco; //TODO
@@ -33,7 +34,8 @@ class PreventivatoreBusiness {
     private $prezzo_cliente_con_iva = 0;
     private $mc;
 
-
+    //reference al preventivo
+    private $preventivo = null;
 
     public function setIndirizzoPartenza(Indirizzo $indirizzo)
     {
@@ -319,8 +321,12 @@ class PreventivatoreBusiness {
      */
     public function save(Customer $customer = null) {
         $preventivo = new PreventivoBusiness();
+        if (!$this->preventivo)
+            $preventivo = $this->preventivo;
+
         if ($customer)
             $preventivo->setCliente($customer);
+
         $preventivo->setPartenza($this->indirizzo_partenza);
         $preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setItems($this->lista_item);
@@ -343,8 +349,10 @@ class PreventivatoreBusiness {
      * Metodo da richiamare quando si modifica un item del preventivatore e si vuola anche aggiornare il preventivo stesso
      * @param $preventivo oggetto da aggiornare
      */
-    public function updatePreventivo(PreventivoBusiness $preventivo)
+    public function updatePreventivo(PreventivoBusiness $preventivo = null)
     {
+        if (!$preventivo)
+            $preventivo = $this->preventivo;
         //$preventivo->setPartenza($this->indirizzo_partenza);
         //$preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setItems($this->lista_item);
@@ -366,4 +374,18 @@ class PreventivatoreBusiness {
         $preventivo->setCliente($customer);
         $preventivo->save();
     }
+
+    public function setNoteInterne($note)
+    {
+        $this->note_interne = $note;
+    }
+
+    public function getNoteInterne() { return $this->note_interne; }
+
+    public function setReferencePreventivo(Preventivo $ref)
+    {
+        $this->preventivo = $ref;
+    }
+
+
 } 

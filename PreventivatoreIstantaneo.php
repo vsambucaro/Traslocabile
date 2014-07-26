@@ -135,6 +135,4 @@ class PreventivatoreIstantaneo extends Preventivatore
 
 
 
-    //TODO DB ->ID PROVINCIA
-
 } 

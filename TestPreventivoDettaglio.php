@@ -18,7 +18,7 @@ class TestPreventivoDettaglio {
     {
         $preventivo = new Preventivo();
         //$preventivo->load(72);
-        if (!$preventivo->loadDettaglio(113)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(116)) die ("Preventivo non esiste");
 
         var_dump($preventivo);
         //var_dump($preventivo->getCliente());
@@ -38,6 +38,7 @@ class TestPreventivoDettaglio {
         //var_dump($preventivatore);
 
         $lista_arredi = $preventivo->getListaArredi();
+        if ($lista_arredi)
         foreach ($lista_arredi as $arredo)
             echo "\nArredo: ".$arredo->getCampo(Arredo::ID).", paramtro_B:".$arredo->getParteVariabile(Arredo::METRI_LINEARI).", qta=".$arredo->getQta();
 

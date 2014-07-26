@@ -20,13 +20,18 @@ class PreventivatoreDettagliato extends Preventivatore
     const  COSTO_CLIENTE = 1;
 
     private $lista_voci_extra = array();
-    private $commesse = null ;
+    private $preventivo = null;
 
-    /**
+
+   /**
      * @param $id_arredo
      * @param null $parte_variabile
      * @param int $qta
      * @param $parametro_B -> Arredo::MONTATO_PIENO; Arredo::MONTATO_VUOTO; Arredo::SMONTATO_PIENO; Arredo::SMONTATO_VUOTO
+     * @param null $dim_A
+     * @param null $dim_P
+     * @param null $dim_L
+     * @return int
      */
     public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_B = null, $dim_A = null, $dim_P = null, $dim_L = null)
      {
@@ -400,6 +405,7 @@ class PreventivatoreDettagliato extends Preventivatore
 
         //TODO capire dove esportare questi valori
 
+
         $result = array('costo_servizio_smontaggio_imballo_carico'=>$costo_servizio_smontaggio_imballo_carico,
             'costo_servizio_imballo_carico'=>$costo_servizio_imballo_carico,
             'costo_trazione'=>$costo_trazione,
@@ -413,7 +419,8 @@ class PreventivatoreDettagliato extends Preventivatore
             'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva
         );
 
-        $this->commesse = $this->calcolaCommesse($result, $this->getDettaglioMC());
+
+
 
         return $result;
 
@@ -424,6 +431,9 @@ class PreventivatoreDettagliato extends Preventivatore
      */
     public function save(Customer $customer = null) {
         $preventivo = new Preventivo();
+        if (!$this->preventivo)
+            $preventivo = $this->preventivo;
+
         if ($customer)
             $preventivo->setCliente($customer);
 
@@ -440,11 +450,6 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->setNoteInterne($this->note_interne);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
-        $preventivo->setImportoCommessaTrasportatore($this->commesse['importo_commessa_trasportatore']);
-        $preventivo->setImportoCommessaTraslocatorePartenza($this->commesse['importo_commessa_traslocatore_partenza']);
-        $preventivo->setImportoCommessaTraslocatoreDestinazione($this->commesse['importo_commessa_traslocatore_destinazione']);
-        $preventivo->setImportoCommessaDepositario($this->commesse['importo_commessa_depositario']);
-        $preventivo->save();
 
         return $preventivo;
     }
@@ -453,8 +458,11 @@ class PreventivatoreDettagliato extends Preventivatore
      * Metodo da richiamare quando si modifica un item del preventivatore e si vuola anche aggiornare il preventivo stesso
      * @param $preventivo oggetto da aggiornare
      */
-    public function updatePreventivo(Preventivo $preventivo)
+    public function updatePreventivo(Preventivo $preventivo = null)
     {
+        if (!$preventivo)
+            $preventivo = $this->preventivo;
+
         //$preventivo->setPartenza($this->indirizzo_partenza);
         //$preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setArredi($this->lista_arredi);
@@ -514,49 +522,12 @@ class PreventivatoreDettagliato extends Preventivatore
         return $this->lista_servizi_destinazione ;
     }
 
-    private function calcolaCommesse($result, $mc)
+    public function setReferencePreventivo(Preventivo $ref)
     {
-
-        $imponibile = $result['prezzo_cliente_senza_iva'];
-        $iva = $result['prezzo_cliente_con_iva'] - $result['prezzo_cliente_senza_iva'];
-        $importo_trasportatore = $result['costo_trazione'];
-        $importo_depositario =  $result['deposito'];
-        $importo_traslocatore_partenza =  $result['costo_servizio_smontaggio_imballo_carico'] + $result['costo_servizio_imballo_carico'];
-        $importo_traslocatore_destinazione =  $result['costo_servizio_scarico'] + $result['costo_servizio_salita'] + $result['costo_servizio_montaggio'];
-
-        $totali = array();
-        $totali[$this->id_trasportatore] = 0;
-        $totali[$this->id_depositario] = 0;
-        $totali[$this->id_traslocatore_destinazione] = 0;
-        $totali[$this->id_traslocatore_partenza] = 0;
-
-        $totaliMC = array();
-        $totaliMC[$this->id_trasportatore] = 0;
-        $totaliMC[$this->id_depositario] = 0;
-        $totaliMC[$this->id_traslocatore_destinazione] = 0;
-        $totaliMC[$this->id_traslocatore_partenza] = 0;
-
-
-        $totali[$this->id_trasportatore] = $totali[$this->id_trasportatore] + $importo_trasportatore;
-        $totali[$this->id_depositario] = $totali[$this->id_depositario] + $importo_depositario;
-        $totali[$this->id_traslocatore_partenza] = $totali[$this->id_traslocatore_partenza] + $importo_traslocatore_partenza;
-        $totali[$this->id_traslocatore_destinazione] = $totali[$this->id_traslocatore_destinazione] + $importo_traslocatore_destinazione;
-
-
-
-        $totaliMC[$this->id_trasportatore] = $totaliMC[$this->id_trasportatore] + $mc['mc_da_trasportare'];
-        $totaliMC[$this->id_depositario] = $totaliMC[$this->id_depositario] + $mc['mc_da_trasportare'];
-        $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc['mc_smontaggio'] + $mc['mc_no_smontaggio'];
-        $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
-
-
-        $commesse = array();
-        $commesse['importo_commessa_trasportatore'] = $totali[$this->id_trasportatore];
-        $commesse['importo_commessa_traslocatore_partenza'] = $totali[$this->id_traslocatore_partenza];
-        $commesse['importo_commessa_traslocatore_destinazione'] = $totali[$this->id_traslocatore_destinazione];
-        $commesse['importo_commessa_depositario']= $totali[$this->id_depositario];
-
-        return $commesse;
+        $this->preventivo = $ref;
     }
+
+
+
 
 } 

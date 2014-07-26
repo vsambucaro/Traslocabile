@@ -42,3 +42,5 @@ require_once 'TariffeClientiBusiness.php';
 require_once 'PreventivatoreBusiness.php';
 require_once 'ItemPreventivatoreBusiness.php';
 require_once 'PreventivoBusiness.php';
+require_once 'Fattura.php';
+require_once 'OrdineClienteBusiness.php';

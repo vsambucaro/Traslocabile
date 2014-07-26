@@ -18,6 +18,9 @@ class Customer {
     public $codice_fiscale;
     public $piva;
 
+    const CLIENTE_BUSINESS = 1;
+    const CLIENTE_CONSUMER = 0;
+
 
     public function __construct( $id_cliente, $email = null )
     {
