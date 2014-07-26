@@ -20,9 +20,9 @@ class PreventivoBusiness {
     private $lista_servizi_istantaneo;
 
     private $stato;
-    private $importo;
+    protected $importo;
 
-    private $id_preventivo;
+    protected  $id_preventivo;
     private $data_preventivo;
     private $data_sopraluogo;
     private $data_trasloco;

@@ -19,7 +19,7 @@ class Customer {
     public $piva;
 
 
-    public function __construct( $id_cliente, $email )
+    public function __construct( $id_cliente, $email = null )
     {
         $this->id_cliente = $id_cliente;
         $this->email = $email;

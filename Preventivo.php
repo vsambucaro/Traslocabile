@@ -39,6 +39,8 @@ class Preventivo {
     protected $lista_voci_extra;
 
     protected $note;
+    protected $note_interne;
+
     protected $flag_sopraluogo;
     //protected $data_sopraluogo;
 
@@ -141,12 +143,18 @@ class Preventivo {
         $this->note = $note;
     }
 
+    public function setNoteInterne($note)
+    {
+        $this->note_interne = $note;
+    }
+
     public function setFlagSopraluogo($flag)
     {
         $this->flag_sopraluogo = $flag;
     }
 
     public function getNote() { return $this->note; }
+    public function getNoteInterne() { return $this->note_interne; }
     public function getFlagSopraluogo() { return $this->flag_sopraluogo; }
 
 
@@ -246,7 +254,7 @@ class Preventivo {
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
-destinazione_codice_provincia, destinazione_codice_citta)
+destinazione_codice_provincia, destinazione_codice_citta, note_interne)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -258,7 +266,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
          '$imponibile','$iva',
          '$partenza_codice_citta', '$partenza_codice_provincia',
-         '$destinazione_codice_provincia', '$destinazione_codice_citta'
+         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$this->note_interne'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -297,7 +305,8 @@ destinazione_codice_provincia, destinazione_codice_citta)
           partenza_codice_citta = '$partenza_codice_citta',
           partenza_codice_provincia = '$partenza_codice_provincia',
           destinazione_codice_citta = '$destinazione_codice_citta',
-          destinazione_codice_provincia = '$destinazione_codice_provincia'
+          destinazione_codice_provincia = '$destinazione_codice_provincia',
+          note_interne = '$this->note_interne'
           WHERE id_preventivo='$id_preventivo'
         ";
 
@@ -499,6 +508,7 @@ destinazione_codice_provincia, destinazione_codice_citta)
             $this->id_cliente = $row->id_cliente;
             $this->imponibile = $row->imponibile;
             $this->iva = $row->iva;
+            $this->note_interne = $row->note_interne;
 
             $found = true;
         }

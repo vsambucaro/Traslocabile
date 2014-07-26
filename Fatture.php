@@ -10,7 +10,10 @@ require_once "Bootstrap.php";
 
 class Fatture {
 
+    const FILTRO_PERIODO_DAL="DAL";
+    const FILTRO_PERIODO_AL="AL";
     private $log;
+
 
 
     public function __construct()
@@ -102,4 +105,91 @@ class Fatture {
         DBUtils::closeConnection($con);
         return true;
     }
+
+    public function getListaFatture( $periodo = null, $filtro_cliente = null )
+    {
+        $lista = array();
+        $con = DBUtils::getConnection();
+        $sql = "SELECT * FROM fatture_attive";
+
+        $first = true;
+
+        if ($periodo)
+        {
+
+            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+            {
+                if ($first)
+                {
+                    $sql .= " WHERE ";
+                }
+                $sql .=" data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+            }
+            else
+            {
+                if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+                {
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
+
+                    $sql .= " data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
+                }
+                if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+                {
+                    if (!$first)
+                    {
+                        $sql .= " AND ";
+                        $first = false;
+                    }
+                    else
+                    {
+                        $sql .= " WHERE ";
+                    }
+
+
+                    $sql .= " data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
+                }
+            }
+        }
+
+        //filtro per cliente
+        if ($filtro_cliente)
+        {
+            if ($first)
+            {
+                $sql .=" id_cliente=".$filtro_cliente;
+                $first = false;
+            }
+            else
+            {
+                $sql .=" AND id_cliente=".$filtro_cliente;
+                $first = false;
+            }
+        }
+
+
+        $res = mysql_query($sql);
+        $lista_id = array();
+        while ($row = mysql_fetch_object($res))
+        {
+
+            $lista_id[] = array('numero_fattura'=>$row->numero_fattura, 'anno'=>$row->anno);
+        }
+
+        DBUtils::closeConnection($con);
+
+        foreach ($lista_id as $record)
+            $lista[] = new Fattura($record['numero_fattura'], $record['anno']);
+
+        return $lista;
+    }
+
+
 } 

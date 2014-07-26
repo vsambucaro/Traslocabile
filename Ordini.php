@@ -10,11 +10,11 @@ class Ordini
 {
 
     private $lista_ordini = array();
-
-
+    const TIPOLOGIA_CLIENTE_CONSUMER = 0;
+    const TIPOLOGIA_CLIENTE_BUSINESS = 1;
 
     public function getListaOrdini($filter = null, $filtro_cliente = null, $filtro_trasportatore=null, $filtro_traslocatore=null,
-                                       $filtro_agenzia = null, $filtro_depositario = null)
+                                       $filtro_agenzia = null, $filtro_depositario = null, $filtro_tipologia_cliente = null)
     {
         $con = DBUtils::getConnection();
         $sql = "SELECT id_preventivo FROM preventivi WHERE tipo=".Ordine::TIPO_ORDINE;
@@ -91,19 +91,16 @@ class Ordini
                 }
             }
 
-            //indica se voglio vedere solo quelli saldati oppure no
-            if (is_array($filter) && array_key_exists('saldato_cliente', $filter))
+            if (is_array($filter) && array_key_exists('tipologia_cliente', $filter))
             {
-                //Se saldato_cliente = 1; visualizza solo ordini saldati;
-                //Se saldato_cliente = 0; visualizza solo ordini non saldati;
                 if ($first)
                 {
-                    $sql .=" saldato_cliente='".$filter['saldato_cliente']."'";
+                    $sql .=" tipologia_cliente='".$filter['tipologia_cliente']."'";
                     $first = false;
                 }
                 else
                 {
-                    $sql .=" AND saldato_cliente='".$filter['saldato_cliente']."'";
+                    $sql .=" AND tipologia_cliente='".$filter['tipologia_cliente']."'";
                     $first = false;
                 }
             }
@@ -121,6 +118,21 @@ class Ordini
             else
             {
                 $sql .=" AND id_cliente=".$filtro_cliente;
+                $first = false;
+            }
+        }
+
+        //filtro per tipologia cliente
+        if ($filtro_tipologia_cliente)
+        {
+            if ($first)
+            {
+                $sql .=" tipologia_cliente=".$filtro_tipologia_cliente;
+                $first = false;
+            }
+            else
+            {
+                $sql .=" AND tipologia_cliente=".$filtro_tipologia_cliente;
                 $first = false;
             }
         }
@@ -193,7 +205,11 @@ class Ordini
         while ($row=mysql_fetch_object($res))
         {
 
-            $ordine = new Ordine($row->id_preventivo);
+            if ($row->tipologia_cliente == Ordini::TIPOLOGIA_CLIENTE_BUSINESS)
+                $ordine = new OrdineBusiness($row->id_preventivo);
+            else
+                $ordine = new Ordine($row->id_preventivo);
+
             $this->lista_ordini[] = $ordine;
 
         }

@@ -423,6 +423,7 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo = new Preventivo();
         if ($customer)
             $preventivo->setCliente($customer);
+
         $preventivo->setPartenza($this->indirizzo_partenza);
         $preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setArredi($this->lista_arredi);
@@ -433,6 +434,7 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
+        $preventivo->setNoteInterne($this->note_interne);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
         $preventivo->save();

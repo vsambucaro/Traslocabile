@@ -21,6 +21,8 @@ abstract class Preventivatore {
     protected $giorni_deposito=0;
 
     protected $note;
+    protected $note_interne;
+
     protected $flag_sopraluogo = 0;
     protected $data_sopraluogo;
 
@@ -78,6 +80,11 @@ abstract class Preventivatore {
         $this->note = $note;
     }
 
+    public function setNoteInterne($note)
+    {
+        $this->note_interne = $note;
+    }
+
     public function setFlagSopraluogo($flag)
     {
         $this->flag_sopraluogo = $flag;
@@ -89,6 +96,7 @@ abstract class Preventivatore {
     }
 
     public function getNote() { return $this->note; }
+    public function getNoteInterne() { return $this->note_interne; }
     public function getFlagSopraluogo() { return $this->flag_sopraluogo; }
 
     public function setDataTrasloco($data) { $this->data_trasloco = $data; }
