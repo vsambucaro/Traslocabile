@@ -992,7 +992,7 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
 
     public function getImportoCommessaTrasportatore() { return $this->importo_commessa_trasportatore;}
     public function getImportoCommessaDepositario() { return $this->importo_commessa_depositario;}
-    public function getImportoCommessaTraslocatorePartenza() { return $this->importo_commessa_traslocatore_partenza;}
+    public function getImportoCommessaTraslocatorePartenza() { return $this->importo_commessa_traslocatore_partenza;} //TODO SISTEMARLI PER CICCIO
     public function getImportoCommessaTraslocatoreDestinazione() { return $this->importo_commessa_traslocatore_destinazione;}
     public function getProvvigioneAgenzia() { return $this->importo_commessa_trasportatore * Parametri::getProvvigioneAgenzia();}
 
@@ -1146,4 +1146,8 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
     public function getImponibile() { return $this->imponibile; }
     public function getIva() { return $this->iva; }
 
+    public function setImportoCommessaTrasportatore($importo) { $this->importo_commessa_trasportatore = $importo; }
+    public function setImportoCommessaTraslocatorePartenza($importo) { $this->importo_commessa_traslocatore_partenza = $importo; }
+    public function setImportoCommessaTraslocatoreDestinazione($importo) { $this->importo_commessa_traslocatore_destinazione = $importo; }
+    public function setImportoCommessaDepositario($importo) { $this->importo_commessa_traslocatore_depositario = $importo; }
 }
