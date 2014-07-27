@@ -70,6 +70,8 @@ class OrdineBusiness extends PreventivoBusiness {
         $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione)
         VALUES ('$id_ordine', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
+        $ret = false;
+        if ($res) $ret = mysql_insert_id();
 
 
         if ($this->getSaldoCliente()<=0)
@@ -79,9 +81,14 @@ class OrdineBusiness extends PreventivoBusiness {
             $sql = "UPDATE preventivi SET saldato_cliente=1 WHERE id_preventivo=".$this->id_preventivo;
 
             $res = mysql_query($sql);
+            $ret = $res;
         }
 
         DBUtils::closeConnection($con);
+
+
+        return $ret;
+
     }
 
     public function addPagamentoFornitore(Pagamento $pagamento, $id_fornitore)
@@ -96,6 +103,8 @@ class OrdineBusiness extends PreventivoBusiness {
         $sql ="INSERT INTO pagamenti_fornitori (id_ordine, $id_fornitore, importo, data, descrizione)
         VALUES ('$id_ordine', '$id_fornitore', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
+        $ret = false;
+        if ($res) $ret = mysql_insert_id();
 
 
         if ($this->getSaldoCliente()<=0)
@@ -105,9 +114,13 @@ class OrdineBusiness extends PreventivoBusiness {
             $sql = "UPDATE ordini_fornitori SET saldato=1 WHERE id_ordine=".$this->id_preventivo." AND id_fornitore=".$id_fornitore;
 
             $res = mysql_query($sql);
+            $ret = $res;
         }
 
         DBUtils::closeConnection($con);
+
+        return $ret;
+
     }
 
 

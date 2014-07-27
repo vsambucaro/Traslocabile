@@ -17,7 +17,7 @@ class OrdiniClienti
                                    $filtro_agenzia = null, $filtro_depositario = null, $filtro_tipologia_cliente = null)
     {
         $con = DBUtils::getConnection();
-        $sql = "SELECT id_preventivo , tipologia_cliente FROM preventivi WHERE tipo=".Ordine::TIPO_ORDINE;
+        $sql = "SELECT * FROM preventivi WHERE tipo=".Ordine::TIPO_ORDINE;
 
         $first = false;
         if ($filter || $filtro_cliente || $filtro_trasportatore || $filtro_traslocatore || $filtro_agenzia || $filtro_depositario)
