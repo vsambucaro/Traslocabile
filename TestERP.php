@@ -20,6 +20,12 @@ class TestERP {
         $res = $erp->getFatturato($filter);
         print_r($res);
 
+        $res = $erp->getListaFattureDaEmettere(array(89));
+        print_r($res);
+
+        $res = $erp->getListaFattureDaRicevere(array(98));
+        print_r($res);
+
         echo "\nFine\n";
     }
 }

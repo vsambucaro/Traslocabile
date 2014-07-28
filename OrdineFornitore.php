@@ -84,7 +84,7 @@ class OrdineFornitore
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
 
-        $sql ="INSERT INTO pagamenti_fornitori (id_ordine, $id_fornitore, importo, data, descrizione)
+        $sql ="INSERT INTO pagamenti_fornitori (id_ordine, id_fornitore, importo, data, descrizione)
         VALUES ('$id_ordine', '$id_fornitore', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
 
