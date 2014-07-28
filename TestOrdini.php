@@ -14,7 +14,7 @@ class TestOrdini {
     public function run()
     {
         $ordini = new Ordini();
-        $lista = $ordini->getListaOrdini(null,89);
+        $lista = $ordini->getListaOrdini(null);
         foreach ($lista as $ordine) {
             echo "\nOrdine: ".$ordine->getId();
         }
