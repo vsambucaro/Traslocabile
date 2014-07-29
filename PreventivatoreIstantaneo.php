@@ -134,13 +134,11 @@ class PreventivatoreIstantaneo extends Preventivatore
     public function getMC() { return $this->mc; }
 
 
-    public function addServizioAccessoreById($id_servizio, $tipo)
+    public function addServizioAccessoreById($id_servizio)
     {
         $servizio = new ServizioAccessoreAggravante($id_servizio);
-        if ($tipo == Servizio::SERVIZIO_PARTENZA)
-            $this->lista_servizi_partenza[] = $servizio;
-        else
-            $this->lista_servizi_destinazione[] = $servizio;
+
+        $this->lista_servizi_partenza[] = $servizio;
     }
 
     /**
@@ -148,13 +146,11 @@ class PreventivatoreIstantaneo extends Preventivatore
      * @param $id_servizio del servizio da rimuovere
      * @param $tipo tipo di servizio Partenza, Destinazione
      */
-    public function removeServizioAccessoById($id_servizio, $tipo)
+    public function removeServizioAccessoById($id_servizio)
     {
         $lista = null;
-        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+
             $lista = $this->lista_servizi_partenza;
-        else
-            $lista = $this->lista_servizi_destinazione;
 
         $tmp_lista = array();
         foreach ($lista as $servizio) {
@@ -164,19 +160,14 @@ class PreventivatoreIstantaneo extends Preventivatore
             }
         }
 
-        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+
             $this->lista_servizi_partenza = $tmp_lista;
-        else
-            $this->lista_servizi_destinazione = $tmp_lista;
     }
 
-    public function addServizioAccessoByItem(ServizioAccessoreAggravante $servizio, $tipo)
+    public function addServizioAccessoByItem(ServizioAccessoreAggravante $servizio)
     {
 
-        if ($tipo == Servizio::SERVIZIO_PARTENZA)
             $this->lista_servizi_partenza[] = $servizio;
-        else
-            $this->lista_servizi_destinazione[] = $servizio;
     }
 
 } 
