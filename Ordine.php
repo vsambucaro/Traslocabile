@@ -97,13 +97,13 @@ class Ordine extends Preventivo {
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
 
-        $sql ="INSERT INTO pagamenti_fornitori (id_ordine, $id_fornitore, importo, data, descrizione)
+        $sql ="INSERT INTO pagamenti_fornitori (id_ordine, id_fornitore, importo, data, descrizione)
         VALUES ('$id_ordine', '$id_fornitore', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
         $ret = false;
         if ($res) $ret = mysql_insert_id();
 
-        if ($this->getSaldoCliente()<=0)
+        if ($this->getSaldoFornitore($$id_fornitore)<=0)
         {
             //aggiorna lo stato ordine a saldato
             $con = DBUtils::getConnection();

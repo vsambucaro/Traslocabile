@@ -79,7 +79,7 @@ class OrdineFornitore
     {
         $con = DBUtils::getConnection();
 
-        $id_ordine = $this->id_ordine;
+        $id_ordine = $this->id_preventivo;
         $importo = $pagamento->importo;
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
@@ -87,18 +87,22 @@ class OrdineFornitore
         $sql ="INSERT INTO pagamenti_fornitori (id_ordine, id_fornitore, importo, data, descrizione)
         VALUES ('$id_ordine', '$id_fornitore', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
+        $ret = false;
+        if ($res) $ret = mysql_insert_id();
 
-
-        if ($this->getSaldoCliente()<=0)
+        if ($this->getSaldoFornitore($$id_fornitore)<=0)
         {
             //aggiorna lo stato ordine a saldato
             $con = DBUtils::getConnection();
-            $sql = "UPDATE ordini_fornitori SET saldato=1 WHERE id_ordine=".$id_ordine." AND id_fornitore=".$id_fornitore;
-
+            $sql = "UPDATE ordini_fornitori SET saldato=1 WHERE id_ordine=".$this->id_preventivo." AND id_fornitore=".$id_fornitore;
             $res = mysql_query($sql);
+            $ret = $res;
         }
 
         DBUtils::closeConnection($con);
+
+
+        return $ret;
     }
 
 

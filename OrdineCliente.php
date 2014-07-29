@@ -70,6 +70,8 @@ class OrdineCliente extends Preventivo {
         $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione)
         VALUES ('$id_ordine', '$importo','$data','$descrizione')";
         $res = mysql_query($sql);
+        $ret = false;
+        if ($res) $ret = mysql_insert_id();
 
 
         if ($this->getSaldoCliente()<=0)
@@ -77,11 +79,13 @@ class OrdineCliente extends Preventivo {
             //aggiorna lo stato ordine a saldato
             $con = DBUtils::getConnection();
             $sql = "UPDATE preventivi SET saldato_cliente=1 WHERE id_preventivo=".$this->id_preventivo;
-
             $res = mysql_query($sql);
+            $ret = $res;
         }
 
         DBUtils::closeConnection($con);
+
+        return $ret;
     }
 
 
