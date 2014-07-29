@@ -16,7 +16,7 @@ class Preventivi {
     $filtro_agenzia = null, $filtro_depositario = null)
     {
         $con = DBUtils::getConnection();
-        $sql = "SELECT id_preventivo FROM preventivi WHERE tipo=".Preventivo::TIPO_PREVENTIVO;
+        $sql = "SELECT * FROM preventivi WHERE tipo=".Preventivo::TIPO_PREVENTIVO;
         //$sql = "SELECT id_preventivo FROM preventivi ";
 
         //$first = true;
@@ -178,11 +178,23 @@ class Preventivi {
         while ($row=mysql_fetch_object($res))
         {
             
-            $preventivo = new Preventivo();
-            $preventivo->load($row->id_preventivo);
-            $this->lista_preventivi[] = $preventivo;
+            //echo "\nLoading:".$row->id_preventivo;
 
+            if ($row->tipologia_cliente == Ordini::TIPOLOGIA_CLIENTE_BUSINESS)
+            {
+                $preventivo = new PreventivoBusiness();
+                $preventivo->load($row->id_preventivo);
+                $this->lista_preventivi[] = $preventivo;
+
+            }
+            else
+            {
+                $preventivo = new Preventivo();
+                $preventivo->load($row->id_preventivo);
+                $this->lista_preventivi[] = $preventivo;
+            }
         }
+
         DBUtils::closeConnection($con);
 /*
         return array('preventivi'=> $this->lista_preventivi,
