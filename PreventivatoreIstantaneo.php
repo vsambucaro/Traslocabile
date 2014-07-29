@@ -134,5 +134,49 @@ class PreventivatoreIstantaneo extends Preventivatore
     public function getMC() { return $this->mc; }
 
 
+    public function addServizioAccessoreById($id_servizio, $tipo)
+    {
+        $servizio = new ServizioAccessoreAggravante($id_servizio);
+        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+            $this->lista_servizi_partenza[] = $servizio;
+        else
+            $this->lista_servizi_destinazione[] = $servizio;
+    }
+
+    /**
+     * Elimina un servizio dalla lista dei servizi
+     * @param $id_servizio del servizio da rimuovere
+     * @param $tipo tipo di servizio Partenza, Destinazione
+     */
+    public function removeServizioAccessoById($id_servizio, $tipo)
+    {
+        $lista = null;
+        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+            $lista = $this->lista_servizi_partenza;
+        else
+            $lista = $this->lista_servizi_destinazione;
+
+        $tmp_lista = array();
+        foreach ($lista as $servizio) {
+            if ($servizio->getCampo(Servizio::ID)!=$id_servizio)
+            {
+                $tmp_lista[] = $servizio;
+            }
+        }
+
+        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+            $this->lista_servizi_partenza = $tmp_lista;
+        else
+            $this->lista_servizi_destinazione = $tmp_lista;
+    }
+
+    public function addServizioAccessoByItem(ServizioAccessoreAggravante $servizio, $tipo)
+    {
+
+        if ($tipo == Servizio::SERVIZIO_PARTENZA)
+            $this->lista_servizi_partenza[] = $servizio;
+        else
+            $this->lista_servizi_destinazione[] = $servizio;
+    }
 
 } 
