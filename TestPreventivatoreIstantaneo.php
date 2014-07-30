@@ -21,6 +21,13 @@ class TestPreventivatoreIstantaneo {
         $preventivatore->addServizioById(1); //montaggio
         $preventivatore->addServizioById(2); //smontaggio
 
+        //Aggiunge Servizi Accessori Partenza:
+        $servizio = new ServizioAccessoreAggravante(6);
+        //$servizio->setMargine(40);
+        //$preventivatore->addServizioAccessoByItem($servizio);
+        $preventivatore->addServizioAccessoreById(6);
+
+
         //Calcola KM
         $calcolatoreDistanza = new CalcolatoreDistanza();
         $info = $calcolatoreDistanza->getDrivingInformationV2('Via Flavio Gioia 8, 20063 Cernusco Sul Naviglio, Milano', 'Roma');
@@ -31,9 +38,10 @@ class TestPreventivatoreIstantaneo {
         $indirizzoDestinazione = new Indirizzo('','Roma','','');
         $preventivatore->setIndirizzoPartenza($indirizzoPartenza);
         $preventivatore->setIndirizzoDestinazione($indirizzoDestinazione);
-        $preventivatore->elabora();
+        //$preventivatore->elabora();
 
         //ottiene i risultati
+
         $mc = $preventivatore->getMC();
         $costo_servizi = $preventivatore->getCostoServizi();
         $costo_trazione = $preventivatore->getCostoTrazione();

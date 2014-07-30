@@ -146,7 +146,7 @@ class PreventivatoreIstantaneo extends Preventivatore
      * @param $id_servizio del servizio da rimuovere
      * @param $tipo tipo di servizio Partenza, Destinazione
      */
-    public function removeServizioAccessoById($id_servizio)
+    public function removeServizioAccessoreById($id_servizio)
     {
         $lista = null;
 
@@ -164,7 +164,7 @@ class PreventivatoreIstantaneo extends Preventivatore
             $this->lista_servizi_partenza = $tmp_lista;
     }
 
-    public function addServizioAccessoByItem(ServizioAccessoreAggravante $servizio)
+    public function addServizioAccessoreByItem(ServizioAccessoreAggravante $servizio)
     {
 
             $this->lista_servizi_partenza[] = $servizio;

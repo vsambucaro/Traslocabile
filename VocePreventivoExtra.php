@@ -8,8 +8,8 @@
 
 class VocePreventivoExtra {
 
-    const POSITIVO='POSITIVO';
-    const NEGATIVO='NEGATIVO';
+    const POSITIVO=1;
+    const NEGATIVO=0;
 
     private $segno;
     private $descrizione;

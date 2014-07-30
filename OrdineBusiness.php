@@ -107,7 +107,7 @@ class OrdineBusiness extends PreventivoBusiness {
         if ($res) $ret = mysql_insert_id();
 
 
-        if ($this->getSaldoFornitore($$id_fornitore)<=0)
+        if ($this->getSaldoFornitore($id_fornitore)<=0)
         {
             //aggiorna lo stato ordine a saldato
             $con = DBUtils::getConnection();
