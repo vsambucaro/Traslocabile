@@ -88,7 +88,7 @@ class OrdineCliente extends Preventivo {
         return $ret;
     }
 
-
+    public function getDataOrdine() { return $this->data_preventivo; }
 
 
 

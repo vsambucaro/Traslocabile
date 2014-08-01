@@ -87,7 +87,6 @@ class OrdineClienteBusiness extends PreventivoBusiness {
     }
 
 
-
-
+    public function getDataOrdine() { return $this->data_preventivo; }
 
 } 

@@ -17,6 +17,7 @@ class Customer {
     public $provincia;
     public $codice_fiscale;
     public $piva;
+    public $tipologia_cliente;
 
     const CLIENTE_BUSINESS = 1;
     const CLIENTE_CONSUMER = 0;

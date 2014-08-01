@@ -9,51 +9,51 @@
 class PreventivoBusiness {
 
     const TIPO_PREVENTIVO=0;
-    private  $customer;
+    protected   $customer;
 
-    private  $partenza;
-    private  $destinazione;
+    protected  $partenza;
+    protected  $destinazione;
 
-    private $lista_item;
-    private $lista_servizi_accessori_partenza;
-    private $lista_servizi_accessori_destinazione;
-    private $lista_servizi_istantaneo;
+    protected $lista_item;
+    protected $lista_servizi_accessori_partenza;
+    protected $lista_servizi_accessori_destinazione;
+    protected $lista_servizi_istantaneo;
 
-    private $stato;
+    protected $stato;
     protected $importo;
-    private $tipo;
+    protected $tipo;
 
     protected  $id_preventivo;
-    private $data_preventivo;
-    private $data_sopraluogo;
-    private $data_trasloco;
+    protected $data_preventivo;
+    protected $data_sopraluogo;
+    protected $data_trasloco;
 
-    private $id_trasportatore;
-    private $id_traslocatore_partenza;
-    private $id_traslocatore_destinazione;
-    private $id_depositario;
+    protected $id_trasportatore;
+    protected $id_traslocatore_partenza;
+    protected $id_traslocatore_destinazione;
+    protected $id_depositario;
 
-    private $id_cliente;
-    private $id_agenzia;
+    protected $id_cliente;
+    protected $id_agenzia;
 
-    private $giorni_deposito;
-    private $lista_voci_extra;
+    protected $giorni_deposito;
+    protected $lista_voci_extra;
 
-    private $note;
-    private $note_interne;
-    private  $flag_sopraluogo;
+    protected $note;
+    protected $note_interne;
+    protected  $flag_sopraluogo;
     //protected $data_sopraluogo;
 
-    private $log;
+    protected $log;
 
-    private $importo_commessa_trasportatore;
-    private $importo_commessa_depositario;
-    private $importo_commessa_traslocatore_partenza;
-    private $importo_commessa_traslocatore_destinazione;
+    protected $importo_commessa_trasportatore;
+    protected $importo_commessa_depositario;
+    protected $importo_commessa_traslocatore_partenza;
+    protected $importo_commessa_traslocatore_destinazione;
 
-    private $imponibile;
-    private $iva;
-    private $mc;
+    protected $imponibile;
+    protected $iva;
+    protected $mc;
 
     public function __construct()
     {
