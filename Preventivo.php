@@ -1111,18 +1111,18 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
         $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc['mc_smontaggio'] + $mc['mc_no_smontaggio'];
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'));
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'));
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'));
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito> 10)
         {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'));
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
 
         }
@@ -1199,18 +1199,18 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
 
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'));
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'));
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'));
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito> 10)
         {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'));
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
 
         }

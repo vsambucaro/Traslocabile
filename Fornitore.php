@@ -6,9 +6,9 @@
  * Time: 5:34 PM
  */
 
-class Customer {
+class Fornitore {
 
-    public $id_cliente;
+    public $id_fornitore;
     public $email;
     public $ragione_sociale;
     public $indirizzo;
@@ -17,21 +17,19 @@ class Customer {
     public $provincia;
     public $codice_fiscale;
     public $piva;
-    public $tipologia_cliente;
-
-    const CLIENTE_BUSINESS = 1;
-    const CLIENTE_CONSUMER = 0;
 
 
-    public function __construct( $id_cliente, $email = null )
+
+
+    public function __construct( $id_fornitore, $email = null )
     {
-        $this->id_cliente = $id_cliente;
+        $this->id_fornitore = $id_fornitore;
         $this->email = $email;
     }
 
-    public function setIdCliente($id_cliente)
+    public function setIdFornitore($id_fornitore)
     {
-        $this->id_cliente = $id_cliente;
+        $this->id_fornitore = $id_fornitore;
     }
 
     //TODO metodo per getORdini e getFatture
