@@ -39,6 +39,10 @@ abstract class Arredo {
 
     private $qta=1; //quantità di default = 1
 
+    protected $servizio_montaggio = 0;
+    protected $servizio_smontaggio = 0;
+    protected $servizio_imballaggio = 0;
+
     private $id_riga = 0;
 
     /**
@@ -98,5 +102,14 @@ abstract class Arredo {
 
     public function setIdRiga($id) { $this->id_riga = $id; }
     public function getIdRiga() { return $this->id_riga; }
+
+    public function setServizioMontaggio($value) { $this->servizio_montaggio = $value; }
+    public function setServizioSmontaggio($value) { $this->servizio_smontaggio = $value; }
+    public function setServizioImballaggio($value) { $this->servizio_imballaggio = $value; }
+
+    public function getServizioMontaggio() { return $this->servizio_montaggio; }
+    public function getServizioSmontaggio() { return $this->servizio_smontaggio; }
+    public function getServizioImballaggio() { return $this->servizio_imballaggio; }
+
 
 } 

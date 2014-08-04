@@ -33,7 +33,16 @@ class TestERP {
                 echo "\nLista Ordini in fattura: ";
                 $lista_ordini = $fattura->getListaOrdini();
                 foreach ($lista_ordini as $ordine)
+                {
                     echo "\nData Ordine: ".$ordine->getDataOrdine()."\tImporto: ".$ordine->getImporto();
+                    if ($ordine instanceof OrdineCliente)
+                    {
+                        $lista_pagamenti = $ordine->getListaPagamentiCliente();
+                        foreach ($lista_pagamenti as $pagamento)
+                            echo "\nPagamento: ".$pagamento->importo;
+                    }
+
+                }
 
                 echo "\n========================================";
 
@@ -65,5 +74,5 @@ class TestERP {
 }
 
 $m = new TestERP();
-//$m->test();
-$m->listaOrdiniDaFatturare();
+$m->test();
+//$m->listaOrdiniDaFatturare();

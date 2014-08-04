@@ -339,8 +339,14 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
             $dim_A = $arredo->getCampo(Arredo::DIM_A);
             $dim_L = $arredo->getCampo(Arredo::DIM_L);
             $dim_P = $arredo->getCampo(Arredo::DIM_P);
-            $sql ="INSERT INTO arredi_preventivo (id_arredo, id_preventivo, qta, dim_A, dim_P, dim_L)
-             VALUES ('$id_arredo', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L')";
+            $servizio_montaggio = $arredo->getServizioMontaggio();
+            $servizio_smontaggio = $arredo->getServizioSmontaggio();
+            $imballaggio = $arredo->getImballaggio();
+
+            $sql ="INSERT INTO arredi_preventivo (id_arredo, id_preventivo, qta, dim_A, dim_P, dim_L,
+            servizio_montaggio, servizio_smontaggio, imballaggio)
+             VALUES ('$id_arredo', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L',
+             '$servizio_montaggio','$servizio_smontaggio','$imballaggio')";
 
             $res = mysql_query($sql);
             $id_arredi_preventivo = mysql_insert_id();
@@ -559,6 +565,10 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
             //$arredo->setCampo(Arredo::DIM_A,$row->dim_A);
             //$arredo->setCampo(Arredo::DIM_P,$row->dim_P);
             //$arredo->setCampo(Arredo::DIM_L,$row->dim_L);
+            $arredo->setServizioImballaggio($row->servizio_imballaggio);
+            $arredo->setServizioMontaggio($row->servizio_montaggio);
+            $arredo->setServizioSmontaggio($row->servizio_smontaggio);
+
             $this->lista_arredi[] = $arredo;
             $found = true;
         }
@@ -591,6 +601,11 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
 
             if (($row->dim_L) && ($row->dim_L>0))
                 $arredo->setCampo(Arredo::DIM_L,$row->dim_L);
+
+            $arredo->setServizioImballaggio($row->servizio_imballaggio);
+            $arredo->setServizioMontaggio($row->servizio_montaggio);
+            $arredo->setServizioSmontaggio($row->servizio_smontaggio);
+
 
             $this->lista_arredi[] = $arredo;
             $found = true;
