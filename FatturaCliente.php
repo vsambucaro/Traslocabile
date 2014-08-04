@@ -156,10 +156,10 @@ class FatturaCliente {
         $importo = $pagamento->importo;
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
-        $id_fornitore = $this->fornitore->id_fornitore;
+        $id_cliente = $this->cliente->id_cliente;
 
-        $sql ="INSERT INTO pagamenti_fornitori (numero_fattura, id_fornitore, importo, data, descrizione, anno)
-        VALUES ('$numero_fattura', '$id_fornitore', '$importo','$data','$descrizione', '$anno')";
+        $sql ="INSERT INTO pagamenti_clieti_business (numero_fattura, id_cliente, importo, data, descrizione, anno)
+        VALUES ('$numero_fattura', '$id_cliente', '$importo','$data','$descrizione', '$anno')";
         $res = mysql_query($sql);
 
         DBUtils::closeConnection($con);

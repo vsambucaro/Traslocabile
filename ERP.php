@@ -446,12 +446,13 @@ class ERP
      * Questo metodo si deve usare per i fornitori per avere l'elenco degli ordini da fatturare a Traslocabile
      * Si deve usare dall'admin per avere l'elenco degli ordini che non sono stati ancora fatturati dai vari fornitori e per cui si riceverà fattura
      */
-    public function getListaOrdiniFonitoriNonFatturati($filtro_fornitore = null, $periodo = null)
+    public function getListaOrdiniFornitoriNonFatturati($filtro_fornitore = null, $periodo = null)
     {
         $lista = array();
         $con = DBUtils::getConnection();
-        $sql = "SELECT of.* p.data , p.data_trasloco FROM ordini_fornitori of, preventivi p WHERE of.id_ordine NOT IN (SELECT id_ordine FROM ordini_fatture_passive) AND p.stato = 'Completato' AND p.tipo=".OrdineCliente::TIPO_ORDINE
-            ." AND of.id_ordine_cliente = p.id_preventivo"
+        $sql = "SELECT of.* , p.data , p.data_trasloco FROM ordini_fornitori of, preventivi p WHERE
+        of.id_ordine_fornitore NOT IN (SELECT id_ordine_fornitore FROM ordini_fatture_passive)
+        AND p.stato = 'Completato' AND p.tipo=1 AND of.id_ordine_cliente = p.id_preventivo"
         ;
 
         if ($periodo)
@@ -472,6 +473,7 @@ class ERP
             }
 
         $res = mysql_query($sql);
+        //echo "\nSQL:".$sql;
         while ($row = mysql_fetch_object($res))
         {
             if ($filtro_fornitore)

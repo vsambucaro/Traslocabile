@@ -71,8 +71,15 @@ class TestERP {
             echo "\n========================================";
         }
     }
+
+    public function testListaOrdiniFornitoriNonFatturati()
+    {
+        $erp = new ERP();
+        $res = $erp->getListaOrdiniFornitoriNonFatturati();
+        print_r($res);
+    }
 }
 
 $m = new TestERP();
-$m->test();
+$m->testListaOrdiniFornitoriNonFatturati();
 //$m->listaOrdiniDaFatturare();
