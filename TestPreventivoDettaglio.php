@@ -18,7 +18,7 @@ class TestPreventivoDettaglio {
     {
         $preventivo = new Preventivo();
         //$preventivo->load(72);
-        if (!$preventivo->loadDettaglio(116)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(120)) die ("Preventivo non esiste");
 
         var_dump($preventivo);
         //var_dump($preventivo->getCliente());
@@ -57,6 +57,9 @@ class TestPreventivoDettaglio {
         $arredo_tmp->setParametroB(ArredoDettagliato::MONTATO_PIENO);
         $arredo_tmp->setCampo(Arredo::DIM_A,100);
         $arredo_tmp->setQta(2);
+        $arredo_tmp->setServizioMontaggio(1);
+        $arredo_tmp->setServizioImballaggio(1);
+        $arredo_tmp->setServizioSmontaggio(1);
 
         //var_dump($arredo_tmp);
 

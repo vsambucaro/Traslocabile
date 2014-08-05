@@ -341,10 +341,10 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
             $dim_P = $arredo->getCampo(Arredo::DIM_P);
             $servizio_montaggio = $arredo->getServizioMontaggio();
             $servizio_smontaggio = $arredo->getServizioSmontaggio();
-            $imballaggio = $arredo->getImballaggio();
+            $imballaggio = $arredo->getServizioImballaggio();
 
             $sql ="INSERT INTO arredi_preventivo (id_arredo, id_preventivo, qta, dim_A, dim_P, dim_L,
-            servizio_montaggio, servizio_smontaggio, imballaggio)
+            servizio_montaggio, servizio_smontaggio, servizio_imballaggio)
              VALUES ('$id_arredo', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L',
              '$servizio_montaggio','$servizio_smontaggio','$imballaggio')";
 
