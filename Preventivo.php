@@ -55,10 +55,33 @@ class Preventivo {
     protected $imponibile;
     protected $iva;
 
+    protected $partenza_localizzazione;
+    protected $partenza_localizzazione_tipo;
+    protected $partenza_localizzazione_tipo_piano;
+
+    protected $destinazione_localizzazione;
+    protected $destinazione_localizzazione_tipo;
+    protected $destinazione_localizzazione_tipo_piano;
+
     public function __construct()
     {
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
 
+    }
+
+    public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->partenza_localizzazione = $id_localizzazione;
+        $this->partenza_localizzazione_tipo = $id_tipo;
+        $this->partenza_localizzazione_tipo_piano = $id_piano;
+    }
+
+
+    public function setLocalizzazioneDestinazione($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->destinazione_localizzazione = $id_localizzazione;
+        $this->destinazione_localizzazione_tipo = $id_tipo;
+        $this->destinazione_localizzazione_tipo_piano = $id_piano;
     }
 
     //set id cliente del preventivo
@@ -260,7 +283,9 @@ class Preventivo {
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
-destinazione_codice_provincia, destinazione_codice_citta, note_interne)
+destinazione_codice_provincia, destinazione_codice_citta, note_interne,
+partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
+destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -272,7 +297,9 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
          '$imponibile','$iva',
          '$partenza_codice_citta', '$partenza_codice_provincia',
-         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$this->note_interne'
+         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$this->note_interne',
+         '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
+         '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -312,7 +339,14 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
           partenza_codice_provincia = '$partenza_codice_provincia',
           destinazione_codice_citta = '$destinazione_codice_citta',
           destinazione_codice_provincia = '$destinazione_codice_provincia',
-          note_interne = '$this->note_interne'
+          note_interne = '$this->note_interne',
+          partenza_localizzazione = '$this->partenza_localizzazione',
+          partenza_localizzazione_tipo = '$this->partenza_localizzazione_tipo',
+          partenza_localizzazione_tipo_piano = '$this->partenza_localizzazione_tipo_piano',
+          destinazione_localizzazione = '$this->destinazione_localizzazione',
+          destinazione_localizzazione_tipo = '$this->destinazione_localizzazione_tipo',
+          destinazione_localizzazione_tipo_piano = '$this->destinazione_localizzazione_tipo_piano'
+
           WHERE id_preventivo='$id_preventivo'
         ";
 
@@ -349,6 +383,7 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
              '$servizio_montaggio','$servizio_smontaggio','$imballaggio')";
 
             $res = mysql_query($sql);
+            echo "\n SQL:".$sql;
             $id_arredi_preventivo = mysql_insert_id();
             $parametro = '';
             $valore = '';
@@ -522,6 +557,14 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
             $this->iva = $row->iva;
             $this->note_interne = $row->note_interne;
             $this->tipo = $row->tipo;
+
+            $this->partenza_localizzazione = $row->partenza_localizzazione;
+            $this->partenza_localizzazione_tipo = $row->partenza_localizzazione_tipo;
+            $this->partenza_localizzazione_tipo_piano = $row->partenza_localizzazione_tipo_piano;
+
+            $this->destinazione_localizzazione = $row->destinazione_localizzazione;
+            $this->destinazione_localizzazione_tipo = $row->destinazione_localizzazione_tipo;
+            $this->destinazione_localizzazione_tipo_piano = $row->destinazione_localizzazione_tipo_piano;
 
             $found = true;
         }
@@ -1246,5 +1289,13 @@ destinazione_codice_provincia, destinazione_codice_citta, note_interne)
         DBUtils::closeConnection($con);
 
     }
+
+    public function getIdLocalizzionePartenza() { return $this->partenza_localizzazione; }
+    public function getIdLocalizzioneTipoPartenza() { return $this->partenza_localizzazione_tipo; }
+    public function getIdLocalizzioneTipoPianoPartenza() { return $this->partenza_localizzazione_tipo_piano; }
+
+    public function getIdLocalizzioneDestinazione() { return $this->destinazione_localizzazione; }
+    public function getIdLocalizzioneTipoDestinazione() { return $this->destinazione_localizzazione_tipo; }
+    public function getIdLocalizzioneTipoPianoDestinazione() { return $this->destinazione_localizzazione_tipo_piano; }
 
 }

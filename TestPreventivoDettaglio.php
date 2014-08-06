@@ -43,7 +43,7 @@ class TestPreventivoDettaglio {
             echo "\nArredo: ".$arredo->getCampo(Arredo::ID).", paramtro_B:".$arredo->getParteVariabile(Arredo::METRI_LINEARI).", qta=".$arredo->getQta();
 
 
-        return;
+
         $preventivatore->elabora();
 
         $mc = $preventivatore->getMC();
