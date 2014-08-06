@@ -383,7 +383,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
              '$servizio_montaggio','$servizio_smontaggio','$imballaggio')";
 
             $res = mysql_query($sql);
-            echo "\n SQL:".$sql;
+            //echo "\n SQL:".$sql;
             $id_arredi_preventivo = mysql_insert_id();
             $parametro = '';
             $valore = '';
