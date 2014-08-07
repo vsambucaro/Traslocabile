@@ -24,9 +24,11 @@ class CalcolatoreMobilieri {
         if ($tmp>120)
             $incremento_peso_volume = (1+ $tmp/120);
 
+        /*
         $km_sede_logistica = $this->calcolaKMSedeLogistica();
         $costo_trazione_sede_logistica = $this->getCostoTrazioneSedeLogistica($km_sede_logistica);
         $prezzo_trazione_sede_logistica = $costo_trazione_sede_logistica * $this->parametri_calcolo->mc_trasportati;
+        */
 
         $prezzo_giacenza = 0;
         if ($this->parametri_calcolo->giorni_deposito > 10)
@@ -35,12 +37,29 @@ class CalcolatoreMobilieri {
         $prezzo_scarico_carico_presso_deposito = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::tariffa_scarico_ricarico_fino_sede_loggistica] *
             $this->parametri_calcolo->mc_trasportati * $incremento_peso_volume;
 
+        /*
         $prezzo_trazione_sede_cliente = 0;
         $km_sede_cliente = $this->calcolaKMSedeCliente();
         if ($this->km_sede_cliente<30)
             $prezzo_trazione_sede_cliente = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::trazione_sede_logistica_cliente_finale_entro_30km] * $this->parametri_calcolo->mc_trasportati;
         else
             $prezzo_trazione_sede_cliente = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::trazione_sede_logistica_cliente_finale_entro_da_30km_a_200km] * $this->parametri_calcolo->mc_trasportati;
+
+        */
+
+        $prezzo_trazione = 0;
+
+        //calcola KM
+        $calcolatoreDistanza = new CalcolatoreDistanza();
+
+        $info = $calcolatoreDistanza->getDrivingInformationV2($this->parametri_calcolo->indirizzo_partenza->toGoogleAddress(),
+            $this->parametri_calcolo->indirizzo_destinazione->toGoogleAddress());
+
+        $km = $info['distance'];
+
+        //calcola costo trazione
+        $prezzo_trazione = $this->_getCostoTrazione($this->parametri_calcolo->mc_trasportati, $km);
+
 
         $prezzo_salita_al_piano = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::tariffa_salita_al_piano] * $incremento_peso_volume * $this->parametri_calcolo->piani_da_salire * $this->parametri_calcolo->mc_trasportati;
 
@@ -59,7 +78,7 @@ class CalcolatoreMobilieri {
             $prezzo_contrassegno = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::pagamento_assegni];
 
 
-        $totale = $prezzo_trazione_sede_logistica + $prezzo_trazione_sede_cliente + $prezzo_salita_al_piano +
+        $totale = $prezzo_trazione + $prezzo_salita_al_piano +
             $prezzo_scarico_presso_cliente + $prezzo_montaggio + $prezzo_contrassegno;
 
         $sconto =  ($totale * $this->parametri_calcolo->sconto);
@@ -73,14 +92,8 @@ class CalcolatoreMobilieri {
     }
 
 
-    private function calcolaKMSedeLogistica()
-    {
-        return 1;
-    }
-
-    private function getCostoTrazioneSedeLogistica($km)
-    {
-        return 1;
+    private function _getCostoTrazione($mc, $km) {
+        return $mc * TrazioneIstantaneo::getCostoMC($mc, $km); //TODO verificare se effettivamente la tabella è uguale. Presumo di no
     }
 
 } 
