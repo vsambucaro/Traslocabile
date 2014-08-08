@@ -10,7 +10,7 @@
 class PreventivatoreIstantaneo extends Preventivatore
 {
 
-     public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_b=null, $dim_A = null, $dim_P = null, $dim_L = null)
+     public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_b=null, $dim_A = null, $dim_P = null, $dim_L = null, $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imballaggio = 0)
      {
          //crea l'oggetto Arredo
          $arredo = new ArredoIstantaneo($id_arredo);

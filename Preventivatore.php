@@ -39,7 +39,7 @@ abstract class Preventivatore {
     protected $lista_servizi_partenza = array();
     protected $lista_servizi_destinazione = array();
 
-    abstract public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_B, $dim_A = null, $dim_P = null, $dim_L = null);
+    abstract public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_B, $dim_A = null, $dim_P = null, $dim_L = null, $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imballaggio = 0);
     abstract public function addServizioById($id_servizio, $tipologia);
 
 
