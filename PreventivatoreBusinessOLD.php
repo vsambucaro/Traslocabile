@@ -9,9 +9,8 @@
 
 class PreventivatoreBusiness {
 
-    const TIPO_ALGORITMO_MOBILIERI = 0;
-    const TIPO_ALGORITMO_CUCINIERI = 1;
-    const TIPO_ALGORITMO_NON_STANDARD = 2;
+    const TIPO_ALGORITMO_STANDARD = 0;
+    const TIPO_ALGORITMO_NON_STANDARD = 1;
     private $lista_item = array();
     private $sconto = 0;
     private $tipo_algoritmo;
@@ -70,39 +69,89 @@ class PreventivatoreBusiness {
 
     public function setSconto($sconto) { $this->sconto = $sconto; }
 
+    private function _getCostoServizioDeposito($mc, $giorni , $tipo_costo = PreventivatoreDettagliato::COSTO_CLIENTE)
+    {
+        $tariffa = ParametriServizio::getParametro(ParametriServizio::TARIFFA_DEPOSITO);
+        if ($tipo_costo == PreventivatoreDettagliato::COSTO_CLIENTE)
+            $costo = $mc * $tariffa['prezzo'] * $giorni;
+        else
+            $costo =$mc * $tariffa['tariffa_operatore'] * $giorni;
+
+        return $costo;
+    }
 
     public function elabora()
     {
-        if ($this->tipo_algoritmo == PreventivatoreBusiness::TIPO_ALGORITMO_MOBILIERI)
-        {
-            $parametri = new ParametriPreventivoBusinessMobilieri();
-            $parametri->partenza = $this->indirizzo_partenza;
-            $parametri->destinazione = $this->indirizzo_destinazione;
-            $parametri->mc_trasportati = $this->getMC();
-            $parametri->piani_da_salire = $this->getPianiDaSalire();
-            $parametri->peso = $this->getPeso();
-            $parametri->giorni_deposito = $this->getGiorniDeposito();
-            $parametri->montaggio = $this->getMontaggio();
-            $parametri->montaggio_in_locali_preggio = $this->getMontaggioInLocaliDiPreggio();
-            $parametri->pagamento_contrassegno = $this->getPagamentoContrassegno();
-            $parametri->margine_traslocabile = Parametri::getMargine();
-            $parametri->lista_voci_extra = $this->getListaVociExtra();
-            //TODO SERVIZI ACCESSORI DOVE LI METTIAMO ?
-            $calcolatore = new CalcolatoreMobilieri();
-            $calcolatore->setParametriCalcolo($parametri);
-            //TODO CAPIRE CHE VALORI ESPORTARE
+        $mc_mese = $this->getMCMese(date('Y'));
+
+        $mc_attuali = $this->getMC();
+        $this->mc = $mc_attuali;
+        //calcola KM
+        $calcolatoreDistanza = new CalcolatoreDistanza();
+        $info = $calcolatoreDistanza->getDrivingInformationV2($this->indirizzo_partenza->toGoogleAddress(),
+            $this->indirizzo_destinazione->toGoogleAddress());
+        $this->setKM($info['distance']);
+
+        $costo_scarico_ricarico_hub = TariffeClientiBusiness::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_trazione = TariffeClientiBusiness::getCostoTrazione($mc_mese,  $this->km, $mc_attuali, $this->tipo_algoritmo);
+        $costo_scarico = TariffeClientiBusiness::getCostoScarico($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_salita_piano = TariffeClientiBusiness::getCostoSalitaPiano($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_montaggio = TariffeClientiBusiness::getCostoMontaggio($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+
+        $valore_voci_extra  = 0;
+        foreach ($this->lista_voci_extra as $voce) {
+            if ($voce->getSegno() == VocePreventivoExtra::POSITIVO)
+                $valore_voci_extra += $voce->getValore();
+            else
+                $valore_voci_extra -= $voce->getValore();
         }
+
+        if ($this->tipo_algoritmo == PreventivatoreBusiness::TIPO_ALGORITMO_STANDARD)
+        {
+            $costo_montaggio_totale = $costo_montaggio * $mc_attuali;
+            $costo_salita_piano_totale = $costo_salita_piano * $mc_attuali;
+            $costo_scarico_totale = $costo_scarico * $mc_attuali;
+            $costo_trazione_totale = $costo_trazione * $mc_attuali;
+            $costo_scarico_ricarico_hub_totale = $costo_scarico_ricarico_hub * $mc_attuali;
+            $deposito = $this->_getCostoServizioDeposito($mc_attuali, $this->giorni_deposito);
+
+            $costo_servizi = $costo_montaggio_totale + $costo_salita_piano_totale + $costo_scarico_totale +
+                $costo_trazione_totale + $costo_scarico_ricarico_hub_totale + $deposito;
+
+            //Aggiungi le aggravanti
+            $costo_servizi_accessori_partenza = $this->_getCostoServiziAccessoriPartenza($costo_servizi);
+            $costo_servizi_accessori_destinazione = $this->_getCostoServiziAccessoriDestinazione($costo_servizi);
+
+            $costo_complessivo = $costo_servizi + + $costo_servizi_accessori_partenza['valore_percentuale'] +
+                $costo_servizi_accessori_partenza['valore_assoluto'] +
+                $costo_servizi_accessori_destinazione['valore_percentuale'] +
+                $costo_servizi_accessori_destinazione['valore_assoluto'] +
+                + $valore_voci_extra;
+
+            $prezzo_cliente = $costo_complessivo * (1- $this->sconto/100);
+
+            $prezzo_cliente_con_iva = $prezzo_cliente * (1 + Parametri::getIVA());
+
+            $result = array('costo_montaggio_totale'=>$costo_montaggio_totale,
+                'costo_salita_piano_totale'=>$costo_salita_piano_totale,
+                'costo_scarico_totale'=>$costo_scarico_totale,
+                'deposito'=>$deposito,
+                'costo_trazione'=>$costo_trazione_totale,
+                'costo_scarico_ricarico_hub_totale'=>$costo_scarico_ricarico_hub_totale,
+                'costo_servizi_accessori_partenza'=>$costo_servizi_accessori_partenza,
+                'costo_servizi_accessori_destinazione'=>$costo_servizi_accessori_destinazione,
+                'prezzo_cliente_senza_iva'=>$prezzo_cliente,
+                'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva
+            );
+
+            $this->prezzo_cliente_con_iva = $prezzo_cliente_con_iva;
+            $this->prezzo_cliente_senza_iva = $prezzo_cliente;
+            return $result;
+
+        }
+
         return 0;
 
-    }
-
-    public function getMC()
-    {
-        $mc = 0;
-        foreach ($this->lista_item as $item) {
-            $mc += ($item->mc * $item->qta);
-        }
-        return $mc;
     }
 
     public function addServizioById($id_servizio, $tipo)
@@ -148,6 +197,20 @@ class PreventivatoreBusiness {
             $this->lista_servizi_partenza[] = $servizio;
         else
             $this->lista_servizi_destinazione[] = $servizio;
+    }
+
+    public function getMC()
+    {
+        $mc = 0;
+        foreach ($this->lista_item as $item) {
+            $mc += ($item->mc * $item->qta);
+        }
+        return $mc;
+    }
+
+    private function getMCMese($mese)
+    {
+        return 0;
     }
 
 

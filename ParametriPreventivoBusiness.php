@@ -20,5 +20,6 @@ class ParametriPreventivoBusiness {
     public $pagamento_contrassegno;
     public $margine_traslocabile;
 
+    public $lista_voci_extra;
 
 } 
