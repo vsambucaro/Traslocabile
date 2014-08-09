@@ -274,10 +274,10 @@ class Preventivo {
         $data_trasloco = $this->data_trasloco;
         $id_agenzia = $this->id_agenzia;
         $flag_sopraluogo = $this->flag_sopraluogo;
-        $note = $this->note;
+        $note = mysql_real_escape_string($this->note);
         $imponibile = $this->imponibile;
         $iva = $this->iva;
-
+        $note_interne = mysql_real_escape_string($this->note_interne);
 
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
@@ -297,7 +297,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
          '$imponibile','$iva',
          '$partenza_codice_citta', '$partenza_codice_provincia',
-         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$this->note_interne',
+         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$note_interne',
          '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
          '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano'
         )";
@@ -339,7 +339,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
           partenza_codice_provincia = '$partenza_codice_provincia',
           destinazione_codice_citta = '$destinazione_codice_citta',
           destinazione_codice_provincia = '$destinazione_codice_provincia',
-          note_interne = '$this->note_interne',
+          note_interne = '$note_interne',
           partenza_localizzazione = '$this->partenza_localizzazione',
           partenza_localizzazione_tipo = '$this->partenza_localizzazione_tipo',
           partenza_localizzazione_tipo_piano = '$this->partenza_localizzazione_tipo_piano',
