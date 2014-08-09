@@ -83,7 +83,7 @@ class ArredoDettagliato extends Arredo
             switch ($this->record[$this::DIMENSIONI_DA_RICHIEDERE])
             {
                 case $this::METRI_LINEARI :
-                    $mc = ($this->record[$this::DIM_A]/100) * ($this->record[$this::DIM_L] * $parte_variabile)*  ($this->record[$this::DIM_P]/100);
+                    $mc = ($this->record[$this::DIM_A]/100) * ($this->record[$this::DIM_L] * $parte_variabile)/100 *  ($this->record[$this::DIM_P]/100);
                     break;
                 case $this::LARGHEZZA :
                     $mc = ($this->record[$this::DIM_A]/100) * ($this->record[$this::DIM_L] * $parte_variabile)/100 *  ($this->record[$this::DIM_P]/100);
