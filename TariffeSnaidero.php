@@ -6,36 +6,36 @@
  * Time: 11:13 PM
  */
 
-class TariffeClientiBusiness {
+class TariffeSnaidero {
 
     public static function getCostoScaricoRicaricoHub($mc_mese, $mc, $tipo_algoritmo)
     {
-        return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'SCARICO_RICARICO_MERCE_PRESSO_HUB');
+        return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'SCARICO_RICARICO_MERCE_PRESSO_HUB');
     }
 
 
     public static function getCostoMontaggio($mc_mese, $mc, $tipo_algoritmo)
     {
-        return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'MONTAGGIO');
+        return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'MONTAGGIO');
     }
 
     public static function getCostoTrazione($mc_mese, $km, $mc, $tipo_algoritmo)
     {
         if ($km<=50)
-            return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'TRAZIONE_DISTRIBUZIONE_HUB_CLIENTE_ENTRO_50KM');
+            return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'TRAZIONE_DISTRIBUZIONE_HUB_CLIENTE_ENTRO_50KM');
         else
-            return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'TRAZIONE_DISTRIBUZIONE_HUB_CLIENTE_OLTRE_50KM');
+            return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'TRAZIONE_DISTRIBUZIONE_HUB_CLIENTE_OLTRE_50KM');
     }
 
 
     public static function getCostoScarico($mc_mese, $mc, $tipo_algoritmo)
     {
-        return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'SCARICO');
+        return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'SCARICO');
     }
 
     public static function getCostoSalitaPiano($mc_mese, $mc, $tipo_algoritmo)
     {
-        return TariffeClientiBusiness::_getCostoServizioBusiness($mc_mese , $mc, 'SALITA_PIANO');
+        return TariffeSnaidero::_getCostoServizioBusiness($mc_mese , $mc, 'SALITA_PIANO');
     }
 
 
@@ -43,7 +43,7 @@ class TariffeClientiBusiness {
     {
 
         $con = DBUtils::getConnection();
-        $sql = "SELECT * FROM tariffe_servizi_business WHERE descrizione = '$tipo_servizio' AND mc>=$mc_mese ORDER BY mc ASC";
+        $sql = "SELECT * FROM tariffe_servizi_snaidero WHERE descrizione = '$tipo_servizio' AND mc>=$mc_mese ORDER BY mc ASC";
         $res = mysql_query($sql);
         $costo = 0;
         $mc_tmp = $mc;

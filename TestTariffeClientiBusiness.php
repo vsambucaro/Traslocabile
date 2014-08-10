@@ -12,7 +12,7 @@ class TestTariffeClientiBusiness {
 
     public function test()
     {
-        $costo = TariffeClientiBusiness::getCostoMontaggio(200, 500, 1);
+        $costo = TariffeSnaidero::getCostoMontaggio(200, 500, 1);
         echo "\nCosto scaglione da usare: ".$costo;
     }
 }

@@ -92,11 +92,11 @@ class PreventivatoreBusiness {
             $this->indirizzo_destinazione->toGoogleAddress());
         $this->setKM($info['distance']);
 
-        $costo_scarico_ricarico_hub = TariffeClientiBusiness::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali, $this->tipo_algoritmo);
-        $costo_trazione = TariffeClientiBusiness::getCostoTrazione($mc_mese,  $this->km, $mc_attuali, $this->tipo_algoritmo);
-        $costo_scarico = TariffeClientiBusiness::getCostoScarico($mc_mese, $mc_attuali, $this->tipo_algoritmo);
-        $costo_salita_piano = TariffeClientiBusiness::getCostoSalitaPiano($mc_mese, $mc_attuali, $this->tipo_algoritmo);
-        $costo_montaggio = TariffeClientiBusiness::getCostoMontaggio($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_scarico_ricarico_hub = TariffeSnaidero::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_trazione = TariffeSnaidero::getCostoTrazione($mc_mese,  $this->km, $mc_attuali, $this->tipo_algoritmo);
+        $costo_scarico = TariffeSnaidero::getCostoScarico($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_salita_piano = TariffeSnaidero::getCostoSalitaPiano($mc_mese, $mc_attuali, $this->tipo_algoritmo);
+        $costo_montaggio = TariffeSnaidero::getCostoMontaggio($mc_mese, $mc_attuali, $this->tipo_algoritmo);
 
         $valore_voci_extra  = 0;
         foreach ($this->lista_voci_extra as $voce) {
