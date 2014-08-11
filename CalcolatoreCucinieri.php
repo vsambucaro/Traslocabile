@@ -6,11 +6,11 @@
  * Time: 8:27 AM
  */
 
-class CalcolatoreSnaidero {
+class CalcolatoreCucinieri {
 
     private $parametri_calcolo;
 
-    public function setParametriCalcolo(ParametriPreventivoBusinessSnaidero $parametri)
+    public function setParametriCalcolo(ParametriPreventivoBusinessCucinieri $parametri)
     {
         $this->parametri_calcolo = $parametri;
 

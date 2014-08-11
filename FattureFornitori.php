@@ -63,7 +63,7 @@ class FattureFornitori {
         //INSERISCE IL DETTAGLIO
         foreach ($lista_ordini as $ordine)
         {
-            $id_ordine_fornitore = $ordine->id_ordine_fornitore();
+            $id_ordine_fornitore = $ordine->id_ordine_fornitore;
             $sql = "INSERT INTO ordini_fatture_passive (numero_fattura, id_ordine_fornitore, anno)
             VALUES ('$numero_fattura', '$id_ordine_fornitore', $anno)";
             $res = mysql_query($sql);

@@ -217,53 +217,7 @@ class PreventivatoreBusiness {
     public function setKM($km) { $this->km = $km; }
     public function getKM() { return $this->km; }
 
-    private function _getCostoServiziAccessoriPartenza($totale)
-    {
-        $valore_percentuale = 0;
-        $valore_assoluto = 0;
-        foreach ($this->lista_servizi_partenza as $servizio)
-        {
-            if (intval($servizio->getCampo(Servizio::PERCENTUALE))>0) {
-                $percentuale = (intval($servizio->getCampo(Servizio::PERCENTUALE))) *
-                    (1+intval($servizio->getCampo(Servizio::MARGINE))/100);
 
-                $valore_percentuale += $totale * (1 + $percentuale/100);
-            }
-            else
-            {
-                $valore_assoluto += doubleval( ($servizio->getCampo(Servizio::VALORE_ASSOLUTO) *
-                    ( 1 + intval($servizio->getCampo(Servizio::MARGINE))/100) ) );
-            }
-        }
-
-
-        return array('valore_percentuale'=>$valore_percentuale ,
-            'valore_assoluto'=>$valore_assoluto);
-    }
-
-    private function _getCostoServiziAccessoriDestinazione($totale)
-    {
-        $valore_percentuale = 0;
-        $valore_assoluto = 0;
-        foreach ($this->lista_servizi_destinazione as $servizio)
-        {
-            if (intval($servizio->getCampo(Servizio::PERCENTUALE))>0) {
-                $percentuale = (intval($servizio->getCampo(Servizio::PERCENTUALE))) *
-                    (1+intval($servizio->getCampo(Servizio::MARGINE))/100);
-
-                $valore_percentuale += $totale * (1 + $percentuale/100);
-            }
-            else
-            {
-                $valore_assoluto += doubleval( ($servizio->getCampo(Servizio::VALORE_ASSOLUTO) *
-                    ( 1 + intval($servizio->getCampo(Servizio::MARGINE))/100) ) );
-            }
-        }
-
-
-        return array('valore_percentuale'=>$valore_percentuale ,
-            'valore_assoluto'=>$valore_assoluto);
-    }
 
     public function addVocePreventivoExtra(VocePreventivoExtra $voce)
     {

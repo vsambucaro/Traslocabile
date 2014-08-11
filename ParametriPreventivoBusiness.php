@@ -22,4 +22,10 @@ class ParametriPreventivoBusiness {
 
     public $lista_voci_extra;
 
+    public $lista_servizi_partenza;
+    public $lista_servizi_destinazione;
+
+    public $sconto;
+
+
 } 

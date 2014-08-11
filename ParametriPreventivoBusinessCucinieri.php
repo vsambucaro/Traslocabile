@@ -6,7 +6,7 @@
  * Time: 8:08 AM
  */
 
-class ParametriPreventivoBusinessSnaidero extends ParametriPreventivoBusiness {
+class ParametriPreventivoBusinessCucinieri extends ParametriPreventivoBusiness {
 
     public $mc_mese;
     public $parametri = array();
@@ -14,7 +14,7 @@ class ParametriPreventivoBusinessSnaidero extends ParametriPreventivoBusiness {
 
     public function __construct()
     {
-        $this->load('SNAIDERO');
+        $this->load('CUCINIERI');
     }
 
     /**
