@@ -162,9 +162,16 @@ class FatturaCliente {
         VALUES ('$numero_fattura', '$id_cliente', '$importo','$data','$descrizione', '$anno')";
         $res = mysql_query($sql);
 
+
+        $sql = "SELECT sum(importo) as somma FROM pagamenti_clieti_business WHERE numero_fattura='$numero_fattura' AND id_cliente=$$id_cliente AND anno='$anno'";
+        $res = mysql_query($sql);
+        $totale_pagato = 0;
+        while ($row = mysql_fetch_object($res))
+            $totale_pagato = $row->somma;
+
         DBUtils::closeConnection($con);
 
-        if ($this->statoSaldoFattura()<=0)
+        if ($totale_pagato>=$this->importo)
             $this->setFatturaSaldata();
 
     }
