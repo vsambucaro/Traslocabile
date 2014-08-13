@@ -74,9 +74,9 @@ class FattureFornitori {
                 return false;
             }
 
-            $importo += $ordine->getImporto();
-            $imponibile += $ordine->getImponibile();
-            $iva += $ordine->getIva();
+            $importo += $ordine->immporto;
+            $imponibile += $ordine->imponibile;
+            $iva += $ordine->iva;
 
         }
 

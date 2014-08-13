@@ -13,6 +13,8 @@ class OrdineFornitore
     public $id_ordine_fornitore;
     public $id_fornitore;
     public $importo;
+    public $imponibile;
+    public $iva;
     public $totale_mc;
     public $saldato;
     public $data_ordine;
@@ -32,7 +34,7 @@ class OrdineFornitore
      * @param $data_ordine
      * @param $tipologia_servizio
      */
-    public function __construct($id_ordine_cliente, $id_fornitore, $importo, $totale_mc , $data_ordine , $tipologia_servizio )
+    public function __construct($id_ordine_cliente, $id_fornitore, $importo, $imponibile, $iva, $totale_mc , $data_ordine , $tipologia_servizio )
     {
         $this->id_ordine_cliente = $id_ordine_cliente;
         $this->id_fornitore = $id_fornitore;
@@ -40,6 +42,8 @@ class OrdineFornitore
         $this->totale_mc = $totale_mc;
         $this->data_ordine = $data_ordine;
         $this->tipologia_servizio = $tipologia_servizio;
+        $this->imponibile = $imponibile;
+        $this->iva = $iva;
 
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
     }
@@ -58,7 +62,7 @@ class OrdineFornitore
         $ordine = null;
         while ($row = mysql_fetch_object($res))
         {
-            $ordine = new OrdineFornitore($row->id_ordine_cliente, $id_fornitore, $row->importo, $row->totale_mc, $row->data_ordine, $row->tipologia_servizio);
+            $ordine = new OrdineFornitore($row->id_ordine_cliente, $id_fornitore, $row->importo, $row->imponibile, $row->iva, $row->totale_mc, $row->data_ordine, $row->tipologia_servizio);
             $ordine->id_ordine_fornitore = $id_ordine_fornitore;
             //$ordine->id = $row->id;
         }
@@ -85,10 +89,15 @@ class OrdineFornitore
         $totale_mc = $this->totale_mc;
         $data_ordine = $this->data_ordine;
         $tipologia_servizio = $this->tipologia_servizio;
-        $sql = "INSERT INTO ordini_fornitori (id_ordine_cliente, id_fornitore, importo, totale_mc, data_ordine, tipologia_servizio)
-                VALUES ('$id_ordine_cliente', '$id_fornitore', '$importo', '$totale_mc', '$data_ordine', '$tipologia_servizio')
+        $imponibile = $this->imponibile;
+        $iva = $this->iva;
+        $sql = "INSERT INTO ordini_fornitori (id_ordine_cliente, id_fornitore, importo, totale_mc, data_ordine, tipologia_servizio,
+        imponibile, iva)
+                VALUES ('$id_ordine_cliente', '$id_fornitore', '$importo', '$totale_mc', '$data_ordine', '$tipologia_servizio',
+                '$imponibile', '$iva')
                 ON DUPLICATE KEY
-                UPDATE importo='" . $this->importo."' , totale_mc='".$this->totale_mc."'";
+                UPDATE importo='" . $this->importo."' , totale_mc='".$this->totale_mc."',
+                imponibile='$imponibile', iva='$iva'";
         $res = mysql_query($sql);
         if (!$res) $this->log->LogError("OrdineFornitore->_insert()->SQL: ".$sql);
         DBUtils::closeConnection($con);
