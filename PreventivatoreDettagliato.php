@@ -154,14 +154,16 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
             {
                     $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_PIENO);
 
+
             }
             if ($arredo->getParametroB() == Arredo::SMONTATO_VUOTO)
             {
                 $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_VUOTO);
 
-            }
 
+            }
             $mc+= $tmp;
+
         }
 
         return $mc;
@@ -179,16 +181,18 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
             if ($arredo->getParametroB() == Arredo::MONTATO_PIENO)
             {
                 $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_PIENO);
+                $mc+= $tmp;
 
             }
 
             if ($arredo->getParametroB() == Arredo::MONTATO_VUOTO)
             {
                 $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_VUOTO);
+                $mc+= $tmp;
 
             }
 
-            $mc+= $tmp;
+
 
         }
 
@@ -339,7 +343,11 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
     }
 
     private function _getCostoTrazione($mc, $km) {
-        return $mc * TrazioneIstantaneo::getCostoMC($mc, $km);
+        $tmp = $mc * TrazioneIstantaneo::getCostoMC($mc, $km) ;
+        //echo "\nTMP: ".$tmp;
+        $calc = $tmp/(1- 0.2);
+        //echo "\n CALC: ".$calc;
+        return $calc;
     }
 
     public function getDettaglioMC()
