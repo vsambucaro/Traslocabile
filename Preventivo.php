@@ -1032,6 +1032,14 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         //carica altri parametri
         $preventivatore->setIndirizzoPartenza($this->partenza);
         $preventivatore->setIndirizzoDestinazione($this->destinazione);
+
+        //calcola KM
+        $calcolatoreDistanza = new CalcolatoreDistanza();
+        $info = $calcolatoreDistanza->getDrivingInformationV2($this->partenza->toGoogleAddress(),
+            $this->destinazione->toGoogleAddress());
+
+        $preventivatore->setKM($info['distance']);
+
         $preventivatore->setGiorniDeposito($this->giorni_deposito);
         $preventivatore->setNote($this->note);
         $preventivatore->setNoteInterne($this->note_interne);

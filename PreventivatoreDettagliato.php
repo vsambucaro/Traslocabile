@@ -367,8 +367,25 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
 
     }
 
-    public function elabora()
+    private function elaboraInstanteno()
     {
+
+        $calcolatore = new CalcolatoreIstantaneo();
+        $calcolatore->km = $this->getKM();
+        $calcolatore->lista_arredi = $this->lista_arredi;
+        $calcolatore->lista_servizi = $this->lista_servizi;
+        $result = $calcolatore->elabora();
+
+        return $result;
+    }
+
+    public function elabora($modo_istantaneo = false)
+    {
+        if ($modo_istantaneo)
+        {
+            return $this->elaboraInstanteno();
+        }
+
         //calcola mc
         $mc_smontaggio = $this->_getMCSmontaggio();
         $mc_no_smontaggio = $this->_getMCNoSmontaggio();

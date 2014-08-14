@@ -47,6 +47,18 @@ class Parametri {
         return $valore;
     }
 
+    public static function getAggiustamentoMC()
+    {
+        $con = DBUtils::getConnection();
+        $sql ="SELECT valore FROM parametri WHERE UPPER(nome)='AGGIUSTAMENTO_MC'";
+        $res = mysql_query($sql);
+        $valore = 0;
+        while ($row=mysql_fetch_object($res)) {
+            $valore = intval($row->valore)/100;
+        }
+        DBUtils::closeConnection($con);
+        return $valore;
+    }
     public static function getProvvigioneAgenzia()
     {
         $con = DBUtils::getConnection();

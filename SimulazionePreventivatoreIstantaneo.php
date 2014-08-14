@@ -11,6 +11,19 @@ require_once 'PreventivatoreIstantaneo.php';
 
 class SimulazionePreventivatoreIstantaneo {
 
+    public function load()
+    {
+        $preventivo = new Preventivo();
+        //$preventivo->load(72);
+        if (!$preventivo->loadDettaglio(306)) die ("Preventivo non esiste");
+
+        $preventivatore = $preventivo->getPreventivatore();
+        $result = $preventivatore->elabora(true);
+
+        echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
+
+
+    }
     public function run()
     {
         $preventivatore = new PreventivatoreIstantaneo();
@@ -59,4 +72,4 @@ class SimulazionePreventivatoreIstantaneo {
 }
 
 $t = new SimulazionePreventivatoreIstantaneo();
-$t->run();
+$t->load();

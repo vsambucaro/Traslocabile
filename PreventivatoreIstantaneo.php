@@ -34,7 +34,14 @@ class PreventivatoreIstantaneo extends Preventivatore
 
      }
 
-     public function addServizioById($id_servizio, $tipologia=null)
+    public function addArredoByItem(ArredoDettagliato $arredo)
+    {
+        $this->lista_arredi[] = $arredo;
+        return $arredo->getMC();
+    }
+
+
+    public function addServizioById($id_servizio, $tipologia=null)
      {
         $servizio = new ServizioIstantaneo($id_servizio);
          $this->lista_servizi[] = $servizio;
@@ -54,7 +61,7 @@ class PreventivatoreIstantaneo extends Preventivatore
         return $mc;
     }
 
-    private function _getCostoServizi($mc)
+    private function _getCostoServiziOLD($mc)
     {
         $costo = 0;
         foreach ($this->lista_servizi as $servizio)
@@ -64,11 +71,11 @@ class PreventivatoreIstantaneo extends Preventivatore
         return $costo;
     }
 
-    private function _getCostoTrazione($mc, $km) {
+    private function _getCostoTrazioneOLD($mc, $km) {
         return $mc * TrazioneIstantaneo::getCostoMC($mc, $km);
     }
 
-    public function elabora()
+    public function elaboraOLD()
     {
 
         //calcola mc
@@ -97,6 +104,32 @@ class PreventivatoreIstantaneo extends Preventivatore
         $this->prezzo_cliente_con_iva = $prezzo_cliente_con_iva;
     }
 
+    public function elabora()
+    {
+
+        //calcola mc
+        $this->mc = $this->_getMC();
+
+
+        //calcola KM
+        $calcolatoreDistanza = new CalcolatoreDistanza();
+        $info = $calcolatoreDistanza->getDrivingInformationV2($this->indirizzo_partenza->toGoogleAddress(),
+            $this->indirizzo_destinazione->toGoogleAddress());
+
+
+        $this->setKM($info['distance']);
+
+        $calcolatore = new CalcolatoreIstantaneo();
+        $calcolatore->km = $this->getKM();
+        $calcolatore->mc = $this->mc;
+        $calcolatore->lista_servizi = $this->lista_servizi;
+
+        $result = $calcolatore->elabora();
+
+        $this->prezzo_traslocatore = $result['$prezzo_traslocatore'];
+        $this->prezzo_cliente_senza_iva = $result['prezzo_cliente_senza_iva'];
+        $this->prezzo_cliente_con_iva = $result['prezzo_cliente_con_iva'];
+   }
     /**
      * Salva il preventivo
      */

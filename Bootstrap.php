@@ -47,3 +47,4 @@ require_once 'FatturaCliente.php';
 require_once 'OrdineClienteBusiness.php';
 require_once 'OrdineBusiness.php';
 require_once 'FatturaFornitore.php';
+require_once 'CalcolatoreIstantaneo.php';
