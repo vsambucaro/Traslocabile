@@ -22,7 +22,7 @@ class FattureFornitori {
     }
 
 
-    public  function registraNuovaFattura($lista_ordini, Fornitore $fornitore, $data_fattura = null, $numero_fattura, $anno = null)
+    public  function registraNuovaFattura($lista_ordini, Fornitore $fornitore, $data_fattura = null, $numero_fattura, $anno = null, $importo = null, $imponibile = null, $iva=null)
     {
         if (!$fornitore)
         {
@@ -46,24 +46,21 @@ class FattureFornitori {
 
 
 
-        return ($this->_creaFattura($lista_ordini, $fornitore, $data_fattura, $numero_fattura, $anno));
+        return ($this->_creaFattura($lista_ordini, $fornitore, $data_fattura, $numero_fattura, $anno, $importo, $imponibile, $iva));
 
     }
 
-    private function _creaFattura($lista_ordini, Fornitore $fornitore, $data_fattura = null, $numero_fattura, $anno = null)
+    private function _creaFattura($lista_ordini, Fornitore $fornitore, $data_fattura = null, $numero_fattura, $anno = null, $importo = null, $imponibile = null, $iva = null)
     {
 
         $con = DBUtils::getConnection();
         if (!$anno)
             $anno = date('Y');
 
-        $importo = 0;
-        $imponibile = 0;
-        $iva = 0;
         //INSERISCE IL DETTAGLIO
         foreach ($lista_ordini as $ordine)
         {
-            echo "\nORDINE: ".$ordine->importo;
+
             $id_ordine_fornitore = $ordine->id_ordine_fornitore;
             $sql = "INSERT INTO ordini_fatture_passive (numero_fattura, id_ordine_fornitore, anno)
             VALUES ('$numero_fattura', '$id_ordine_fornitore', $anno)";
@@ -75,10 +72,12 @@ class FattureFornitori {
                 return false;
             }
 
-            $importo += $ordine->importo;
-            echo "\nORDINE: ".$ordine->importo;
-            $imponibile += $ordine->imponibile;
-            $iva += $ordine->iva;
+            if (!$importo)
+                $importo += $ordine->importo;
+            if (!$imponibile)
+                $imponibile += $ordine->imponibile;
+            if (!$iva)
+                $iva += $ordine->iva;
 
         }
 
