@@ -521,27 +521,27 @@ class ERP
         $sql = "SELECT * FROM fatture_passive fp WHERE TRUE";
 
 
-        if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+        if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
         {
             $sql .="  AND fp.data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
         }
         else
         {
-            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+            if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
             {
                 $sql .= "  AND fp.data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
             }
-            if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+            if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
             {
                 $sql .= " AND fp.data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
             }
         }
 
         if ($filtro_id_fornitore)
-            $sql .= "AND fp.id_fornitore=".$filtro_id_fornitore;
+            $sql .= " AND fp.id_fornitore=".$filtro_id_fornitore;
 
         if ($numero_fattura && $anno_fattura)
-            $sql .= "AND fp.numero_fattura=".$numero_fattura." AND fp.anno=".$anno_fattura;
+            $sql .= " AND fp.numero_fattura=".$numero_fattura." AND fp.anno=".$anno_fattura;
 
         $con = DBUtils::getConnection();
         $res = mysql_query($sql);
@@ -559,7 +559,7 @@ class ERP
             }
             else
             {
-                $fatture[$row->id_cliente] = array( new FatturaFornitore($row->id_fornitore, $row->numero_fattura, $row->anno) );
+                $fatture[$row->id_fornitore] = array( new FatturaFornitore($row->id_fornitore, $row->numero_fattura, $row->anno) );
             }
         }
 

@@ -103,6 +103,26 @@ class OrdineFornitore
         DBUtils::closeConnection($con);
     }
 
+    public function getNumeroFattura()
+    {
+        $con = DBUtils::getConnection();
+        $sql ="SELECT numero_fattura, anno FROM ordini_fatture_passive WHERE id_ordine_fornitore=".$this->id_ordine_fornitore;
+        $res = mysql_query($sql);
+        $numero_fattura = null;
+        $anno = null;
+        while ($row = mysql_fetch_object($res))
+        {
+            $numero_fattura = $row->numero_fattura;
+            $anno = $row->anno;
+        }
+
+        DBUtils::closeConnection($con);
+
+        if ($numero_fattura && $anno)
+            return array('numero_fattura'=>$numero_fattura, 'anno'=>$anno);
+        else
+            return null;
+    }
 
 
 }

@@ -1177,18 +1177,30 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc['mc_smontaggio'] + $mc['mc_no_smontaggio'];
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
+
+        $imponibile = round($totali[$this->id_trasportatore]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_trasportatore] - $imponibile,2);
+
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $imponibile, $iva, $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
+        $imponibile = round($totali[$this->id_traslocatore_partenza]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_partenza] - $imponibile,2);
+
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $imponibile, $iva, $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
+        $imponibile = round($totali[$this->id_traslocatore_destinazione]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_destinazione] - $imponibile,2);
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $imponibile, $iva, $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito> 10)
         {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
+            $imponibile = round($totali[$this->id_depositario]/(1+ Parametri::getIVA()),2);
+            $iva = round($totali[$this->id_depositario] - $imponibile,2);
+
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $imponibile, $iva, $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
 
         }
@@ -1265,18 +1277,28 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
 
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
+        $imponibile = round($totali[$this->id_trasportatore]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_trasportatore] - $imponibile,2);
+
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $imponibile, $iva,  $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
+        $imponibile = round($totali[$this->id_traslocatore_partenza]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_partenza] - $imponibile,2);
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $imponibile, $iva, $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
+        $imponibile = round($totali[$this->id_traslocatore_destinazione]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_destinazione] - $imponibile,2);
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $imponibile, $iva, $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito> 10)
         {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
+            $imponibile = round($totali[$this->id_depositario]/(1+ Parametri::getIVA()),2);
+            $iva = round($totali[$this->id_depositario] - $imponibile,2);
+
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $imponibile, $iva, $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
 
         }

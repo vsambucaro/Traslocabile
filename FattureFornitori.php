@@ -63,6 +63,7 @@ class FattureFornitori {
         //INSERISCE IL DETTAGLIO
         foreach ($lista_ordini as $ordine)
         {
+            echo "\nORDINE: ".$ordine->importo;
             $id_ordine_fornitore = $ordine->id_ordine_fornitore;
             $sql = "INSERT INTO ordini_fatture_passive (numero_fattura, id_ordine_fornitore, anno)
             VALUES ('$numero_fattura', '$id_ordine_fornitore', $anno)";
@@ -74,7 +75,8 @@ class FattureFornitori {
                 return false;
             }
 
-            $importo += $ordine->immporto;
+            $importo += $ordine->importo;
+            echo "\nORDINE: ".$ordine->importo;
             $imponibile += $ordine->imponibile;
             $iva += $ordine->iva;
 

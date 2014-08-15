@@ -14,7 +14,6 @@ class SimulazionePreventivatoreIstantaneo {
     public function load()
     {
         $preventivo = new Preventivo();
-        //$preventivo->load(72);
         if (!$preventivo->loadDettaglio(306)) die ("Preventivo non esiste");
 
         $preventivatore = $preventivo->getPreventivatore();
