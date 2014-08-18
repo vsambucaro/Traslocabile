@@ -375,6 +375,10 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $calcolatore->lista_arredi = $this->lista_arredi;
         $calcolatore->lista_servizi = $this->lista_servizi;
         $result = $calcolatore->elabora();
+        $this->prezzo_cliente_con_iva = round($result['prezzo_cliente_con_iva'], 2);
+        $this->prezzo_cliente_senza_iva = round($result['prezzo_cliente_senza_iva'],2);
+        $this->mc = round($result['mc'],3);
+
 
         return $result;
     }
@@ -476,11 +480,13 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setImporto($this->prezzo_cliente_con_iva);
         $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
         $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
+        $preventivo->setMC($this->mc);
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
         $preventivo->setNoteInterne($this->note_interne);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
+        $preventivo->save();
 
         return $preventivo;
     }
@@ -502,6 +508,10 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setListaVociExtra($this->lista_voci_extra);
         $preventivo->setPartenza($this->indirizzo_partenza);
         $preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setImporto($this->prezzo_cliente_con_iva);
+        $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
+        $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva );
+        $preventivo->setMC($this->mc);
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);
         //$preventivo->save();

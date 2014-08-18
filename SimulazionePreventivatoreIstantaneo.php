@@ -14,12 +14,35 @@ class SimulazionePreventivatoreIstantaneo {
     public function load()
     {
         $preventivo = new Preventivo();
-        if (!$preventivo->loadDettaglio(306)) die ("Preventivo non esiste");
+        //306 è il preventivo di test
 
+        if (!$preventivo->loadDettaglio(322)) die ("Preventivo non esiste");
+
+        
         $preventivatore = $preventivo->getPreventivatore();
         $result = $preventivatore->elabora(true);
 
+
         echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
+        $tabellaArredi = array();
+        $listaArredi = $preventivo->getListaArredi();
+        foreach($listaArredi as $arredo) {
+            $ambiente 	= $arredo->getCampo(Arredo::AMBIENTE);
+
+            $tempArredo = array(
+                "ambiente" 	=> $arredo->getCampo(Arredo::AMBIENTE),
+                "arredo" 	=> $arredo->getCampo(Arredo::ARREDO),
+                "variante"	=> $arredo->getCampo(Arredo::VARIANTE),
+                "mc"		=> $arredo->getMC(),
+                "qta"		=> $arredo->getQta()
+            );
+
+            echo "\nArredo: ".$tempArredo['arredo'].", variante: ".$tempArredo['variante'].", mc: ".$tempArredo['mc'];
+            $tabellaArredi[$ambiente][] = $tempArredo;
+        }
+
+        $preventivatore->updatePreventivo($preventivo);
+        $preventivo->save();
 
 
     }
@@ -48,8 +71,6 @@ class SimulazionePreventivatoreIstantaneo {
         //ottiene i risultati
 
         $mc = $preventivatore->getMC();
-        $costo_servizi = $preventivatore->getCostoServizi();
-        $costo_trazione = $preventivatore->getCostoTrazione();
         $prezzo_traslocatore = $preventivatore->getPrezzoTraslocatore();
         $prezzo_cliente_senza_iva = $preventivatore->getPrezzoClienteSenzaIva();
         $prezzo_cliente_con_iva = $preventivatore->getPrezzoClienteConIva();
@@ -61,8 +82,6 @@ class SimulazionePreventivatoreIstantaneo {
 
         //visualizza i risultati
         echo "\nMC: ".$mc;
-        echo "\ncosto_servizi: ".$costo_servizi;
-        echo "\ncosto_trazione: ".$costo_trazione;
         echo "\nprezzo_traslocatore: ".$prezzo_traslocatore;
         echo "\nprezzo_cliente_senza_iva: ".$prezzo_cliente_senza_iva;
         echo "\nprezzo_cliente_con_iva: ".$prezzo_cliente_con_iva;
@@ -71,4 +90,4 @@ class SimulazionePreventivatoreIstantaneo {
 }
 
 $t = new SimulazionePreventivatoreIstantaneo();
-$t->load();
+$t->run();

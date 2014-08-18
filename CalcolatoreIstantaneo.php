@@ -45,6 +45,7 @@ class CalcolatoreIstantaneo {
 
         //calcola mc
         $this->mc = $this->_getMC();
+        $tmp_mc = $this->mc;
         //echo "\nKM: ".$this->km;
         //echo "\nMC : ".$this->mc;
         $this->mc = $this->mc * (1 + Parametri::getAggiustamentoMC());
@@ -65,8 +66,9 @@ class CalcolatoreIstantaneo {
 
 
         return array('prezzo_traslocatore'=>$prezzo_traslocatore,
-        'prezzo_cliente_senza_iva'=>$prezzo_cliente_senza_iva,
-        'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva
+            'prezzo_cliente_senza_iva'=>$prezzo_cliente_senza_iva,
+            'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva,
+            'mc'=>$tmp_mc
     );
 
 

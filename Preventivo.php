@@ -62,6 +62,7 @@ class Preventivo {
     protected $destinazione_localizzazione;
     protected $destinazione_localizzazione_tipo;
     protected $destinazione_localizzazione_tipo_piano;
+    protected $mc;
 
     public function __construct()
     {
@@ -285,7 +286,7 @@ data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositari
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
 destinazione_codice_provincia, destinazione_codice_citta, note_interne,
 partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
-destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano)
+destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -299,7 +300,8 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
          '$partenza_codice_citta', '$partenza_codice_provincia',
          '$destinazione_codice_provincia', '$destinazione_codice_citta', '$note_interne',
          '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
-         '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano'
+         '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano',
+         '$this->mc'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -345,14 +347,17 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
           partenza_localizzazione_tipo_piano = '$this->partenza_localizzazione_tipo_piano',
           destinazione_localizzazione = '$this->destinazione_localizzazione',
           destinazione_localizzazione_tipo = '$this->destinazione_localizzazione_tipo',
-          destinazione_localizzazione_tipo_piano = '$this->destinazione_localizzazione_tipo_piano'
+          destinazione_localizzazione_tipo_piano = '$this->destinazione_localizzazione_tipo_piano',
+          mc = '$this->mc'
 
           WHERE id_preventivo='$id_preventivo'
         ";
 
         }
 
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
+
         if (!$res) {
             die ("ERRORE: ".$sql);
         }
@@ -557,6 +562,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             $this->iva = $row->iva;
             $this->note_interne = $row->note_interne;
             $this->tipo = $row->tipo;
+            $this->mc = $row->mc;
 
             $this->partenza_localizzazione = $row->partenza_localizzazione;
             $this->partenza_localizzazione_tipo = $row->partenza_localizzazione_tipo;
@@ -1327,5 +1333,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
     public function getIdLocalizzioneDestinazione() { return $this->destinazione_localizzazione; }
     public function getIdLocalizzioneTipoDestinazione() { return $this->destinazione_localizzazione_tipo; }
     public function getIdLocalizzioneTipoPianoDestinazione() { return $this->destinazione_localizzazione_tipo_piano; }
+    public function setMC($mc) { $this->mc = $mc; }
+    public function getMC($mc) { return $this->mc; }
 
 }

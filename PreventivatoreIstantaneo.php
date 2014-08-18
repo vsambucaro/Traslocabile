@@ -108,7 +108,7 @@ class PreventivatoreIstantaneo extends Preventivatore
     {
 
         //calcola mc
-        $this->mc = $this->_getMC();
+        $this->mc = round($this->_getMC(),3);
 
 
         //calcola KM
@@ -122,13 +122,17 @@ class PreventivatoreIstantaneo extends Preventivatore
         $calcolatore = new CalcolatoreIstantaneo();
         $calcolatore->km = $this->getKM();
         $calcolatore->mc = $this->mc;
+
+        $calcolatore->lista_arredi = $this->lista_arredi;
+
         $calcolatore->lista_servizi = $this->lista_servizi;
 
         $result = $calcolatore->elabora();
 
-        $this->prezzo_traslocatore = $result['$prezzo_traslocatore'];
-        $this->prezzo_cliente_senza_iva = $result['prezzo_cliente_senza_iva'];
-        $this->prezzo_cliente_con_iva = $result['prezzo_cliente_con_iva'];
+        $this->prezzo_traslocatore = round($result['prezzo_traslocatore'], 2);
+        $this->prezzo_cliente_senza_iva = round($result['prezzo_cliente_senza_iva'],2);
+        $this->prezzo_cliente_con_iva = round($result['prezzo_cliente_con_iva'],2);
+
    }
     /**
      * Salva il preventivo
@@ -143,6 +147,10 @@ class PreventivatoreIstantaneo extends Preventivatore
         $preventivo->setServiziIstantaneo($this->lista_servizi);
         $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
         $preventivo->setImporto($this->prezzo_cliente_con_iva);
+        $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
+        $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
+        $preventivo->setMC($this->mc);
+
         $preventivo->setStato($this->stato);
         $preventivo->setStato($this->stato);
         $preventivo->setNote($this->note);
