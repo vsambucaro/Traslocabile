@@ -508,6 +508,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         $found = $this->_loadPreventivo($id_preventivo);
         $this->_loadArrediPreventivo($id_preventivo);
         $this->_loadServiziIstantaneoPreventivo($id_preventivo);
+        $this->_loadServiziDettaglio($id_preventivo);
 
         //echo "\nCaricamento Preventivo OK";
 
@@ -519,6 +520,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         //echo "\nInizio Caricamento ";
         $found = $this->_loadPreventivo($id_preventivo);
         $this->_loadArrediPreventivoDettaglio($id_preventivo);
+        $this->_loadServiziIstantaneoPreventivo($id_preventivo);
         $this->_loadServiziDettaglio($id_preventivo);
         $this->_loadDeposito($id_preventivo);
         $this->_loadVociPreventivoExtra($id_preventivo);
@@ -697,6 +699,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
     private function _loadServiziIstantaneoPreventivo($id_preventivo) {
         $con = DBUtils::getConnection();
         $sql ="SELECT * FROM servizi_istantaneo_preventivo WHERE id_preventivo=$id_preventivo";
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
         $found = 0;
         while ($row=mysql_fetch_object($res))
@@ -1033,7 +1036,8 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             foreach ($this->lista_voci_extra as $voce)
                 $preventivatore->addVocePreventivoExtra($voce);
 
-
+        if ($this->lista_servizi_istantaneo)
+            $preventivatore->setListaServiziIstantaneo($this->lista_servizi_istantaneo);
 
         //carica altri parametri
         $preventivatore->setIndirizzoPartenza($this->partenza);

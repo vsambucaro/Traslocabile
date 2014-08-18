@@ -27,17 +27,19 @@ class CalcolatoreIstantaneo {
     private function _getCostoServizi($mc)
     {
         $costo = 0;
-        foreach ($this->lista_servizi as $servizio)
-        {
-            $costo += $mc * $servizio->getCampo(Servizio::COSTO);
-        }
+        if ($this->lista_servizi)
+            foreach ($this->lista_servizi as $servizio)
+            {
+                $costo += $mc * $servizio->getCampo(Servizio::COSTO);
+            }
         return $costo;
     }
 
     private function _getCostoTrazione($mc, $km) {
        $tmp = $mc * TrazioneIstantaneo::getCostoMC($mc, $km);
-        $res = $tmp/(1-0.2);
-        return $res;
+
+        //$res = $tmp/(1-0.2);
+        return $tmp;
     }
 
     public function elabora()
@@ -45,7 +47,9 @@ class CalcolatoreIstantaneo {
 
         //calcola mc
         $this->mc = $this->_getMC();
+
         $tmp_mc = $this->mc;
+        //$this->km = 65;
         //echo "\nKM: ".$this->km;
         //echo "\nMC : ".$this->mc;
         $this->mc = $this->mc * (1 + Parametri::getAggiustamentoMC());

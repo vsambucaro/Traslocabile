@@ -16,7 +16,8 @@ class SimulazionePreventivatoreIstantaneo {
         $preventivo = new Preventivo();
         //306 è il preventivo di test
 
-        if (!$preventivo->loadDettaglio(322)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(367)) die ("Preventivo non esiste");
+        //if (!$preventivo->load(359)) die ("Preventivo non esiste");
 
         
         $preventivatore = $preventivo->getPreventivatore();
@@ -41,8 +42,15 @@ class SimulazionePreventivatoreIstantaneo {
             $tabellaArredi[$ambiente][] = $tempArredo;
         }
 
+        echo "\nLista Servizi: ";
+        $servizi = $preventivo->getListaServiziIstantaneo();
+        //print_r($servizi);
+        if ($servizi)
+        foreach ($servizi as $servizio)
+            echo  "\nServizio: ".$servizio->getCampo(ServizioIstantaneo::SERVIZIO);
+
         $preventivatore->updatePreventivo($preventivo);
-        $preventivo->save();
+        //$preventivo->save();
 
 
     }
@@ -61,8 +69,8 @@ class SimulazionePreventivatoreIstantaneo {
         echo "\nGOOGLE: ".$info['distance'] . ' - ' . $info['time'];
         //$preventivatore->setKM($info['distance']);
 
-        $indirizzoPartenza = new Indirizzo('Via Garibaldi 7','Bermamo','','');
-        $indirizzoDestinazione = new Indirizzo('Via Mazzini 45','Bergamo','','');
+        $indirizzoPartenza = new Indirizzo('','Bermamo','','');
+        $indirizzoDestinazione = new Indirizzo('','Bergamo','','');
         $preventivatore->setIndirizzoPartenza($indirizzoPartenza);
         $preventivatore->setIndirizzoDestinazione($indirizzoDestinazione);
 
@@ -90,4 +98,4 @@ class SimulazionePreventivatoreIstantaneo {
 }
 
 $t = new SimulazionePreventivatoreIstantaneo();
-$t->run();
+$t->load();

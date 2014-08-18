@@ -21,7 +21,7 @@ class CalcolatoreDistanza {
 
         if ($jsonToObject->status == "OK") {
             //Good Address
-            echo "\nGOOGLE:".$jsonToObject->rows[0]->elements[0]->distance->text;
+            //echo "\nGOOGLE:".$jsonToObject->rows[0]->elements[0]->distance->text;
             $dist = str_replace('m', '', $jsonToObject->rows[0]->elements[0]->distance->text);
             $dist = str_replace('k', '', $dist);
             return array(

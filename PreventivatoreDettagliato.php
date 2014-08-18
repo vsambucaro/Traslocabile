@@ -486,6 +486,7 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setNoteInterne($this->note_interne);
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
+        $preventivo->setServiziIstantaneo($this->lista_servizi);
         $preventivo->save();
 
         return $preventivo;
@@ -512,6 +513,7 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
         $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva );
         $preventivo->setMC($this->mc);
+        $preventivo->setServiziIstantaneo($this->lista_servizi);
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);
         //$preventivo->save();
@@ -568,6 +570,11 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $this->preventivo = $ref;
     }
 
+
+    public function setListaServiziIstantaneo($lista)
+    {
+        $this->lista_servizi = $lista;
+    }
 
 
 
