@@ -21,8 +21,12 @@ class CalcolatoreDistanza {
 
         if ($jsonToObject->status == "OK") {
             //Good Address
+            echo "\nGOOGLE:".$jsonToObject->rows[0]->elements[0]->distance->text;
+            $dist = str_replace('m', '', $jsonToObject->rows[0]->elements[0]->distance->text);
+            $dist = str_replace('k', '', $dist);
             return array(
-                'distance' => str_replace(' ', '', str_replace('km', '', $jsonToObject->rows[0]->elements[0]->distance->text)),
+               // 'distance' => str_replace(' ', '', str_replace('km', '', $jsonToObject->rows[0]->elements[0]->distance->text)),
+                'distance' => str_replace(' ', '', $dist),
                 'time' => $jsonToObject->rows[0]->elements[0]->duration->text,
             );
         } else {
