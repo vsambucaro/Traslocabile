@@ -1338,6 +1338,6 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
     public function getIdLocalizzioneTipoDestinazione() { return $this->destinazione_localizzazione_tipo; }
     public function getIdLocalizzioneTipoPianoDestinazione() { return $this->destinazione_localizzazione_tipo_piano; }
     public function setMC($mc) { $this->mc = $mc; }
-    public function getMC($mc) { return $this->mc; }
+    public function getMC() { return $this->mc; }
 
 }

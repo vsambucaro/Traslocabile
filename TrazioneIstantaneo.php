@@ -22,8 +22,20 @@ class TrazioneIstantaneo {
         $costo = 0;
         while ($row=mysql_fetch_object($res)) {
             $costo = $row->costo;
+        }
+        if ($costo == 0)
+        {
+            $sql = "SELECT costo FROM trazione_istantaneo WHERE mc=76  AND km>=$km ORDER BY mc ASC , km ASC LIMIT 1";
+           // echo "\nSQL: ".$sql;
+            $res = mysql_query($sql);
+            $costo = 0;
+            while ($row=mysql_fetch_object($res)) {
+                $costo = $row->costo;
+            }
 
         }
+
+
         DBUtils::closeConnection($con);
         //echo "\nCOSTO UNITARIO TRAZIONE: ".$costo;
         return $costo;

@@ -16,7 +16,7 @@ class SimulazionePreventivatoreIstantaneo {
         $preventivo = new Preventivo();
         //306 è il preventivo di test
 
-        if (!$preventivo->loadDettaglio(367)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(402)) die ("Preventivo non esiste");
         //if (!$preventivo->load(359)) die ("Preventivo non esiste");
 
         
@@ -31,6 +31,7 @@ class SimulazionePreventivatoreIstantaneo {
             $ambiente 	= $arredo->getCampo(Arredo::AMBIENTE);
 
             $tempArredo = array(
+                'id'=>$arredo->getCampo(Arredo::ID),
                 "ambiente" 	=> $arredo->getCampo(Arredo::AMBIENTE),
                 "arredo" 	=> $arredo->getCampo(Arredo::ARREDO),
                 "variante"	=> $arredo->getCampo(Arredo::VARIANTE),
@@ -38,7 +39,7 @@ class SimulazionePreventivatoreIstantaneo {
                 "qta"		=> $arredo->getQta()
             );
 
-            echo "\nArredo: ".$tempArredo['arredo'].", variante: ".$tempArredo['variante'].", mc: ".$tempArredo['mc'];
+            echo "\nID:" .$tempArredo['id'].", Arredo: ".$tempArredo['arredo'].", variante: ".$tempArredo['variante'].", mc: ".$tempArredo['mc'];
             $tabellaArredi[$ambiente][] = $tempArredo;
         }
 
@@ -50,17 +51,18 @@ class SimulazionePreventivatoreIstantaneo {
             echo  "\nServizio: ".$servizio->getCampo(ServizioIstantaneo::SERVIZIO);
 
         $preventivatore->updatePreventivo($preventivo);
-        //$preventivo->save();
+        $preventivo->save();
 
+        echo "\nMC: ".$preventivo->getMC();
 
     }
     public function run()
     {
         $preventivatore = new PreventivatoreIstantaneo();
 
-        $preventivatore->addArredoById(259, array(Arredo::METRI_LINEARI=>300) ); //CUCINA MOBILE CUCINA
-        $preventivatore->addArredoById(258); //camera letto matrimoniale
-
+        //$preventivatore->addArredoById(259, array(Arredo::METRI_LINEARI=>300) ); //CUCINA MOBILE CUCINA
+        //$preventivatore->addArredoById(258); //camera letto matrimoniale
+        $preventivatore->addArredoById(285, array(Arredo::LARGHEZZA=>100) ); //MOBILE BAGNO
 
 
         //Calcola KM
@@ -69,7 +71,7 @@ class SimulazionePreventivatoreIstantaneo {
         echo "\nGOOGLE: ".$info['distance'] . ' - ' . $info['time'];
         //$preventivatore->setKM($info['distance']);
 
-        $indirizzoPartenza = new Indirizzo('','Bermamo','','');
+        $indirizzoPartenza = new Indirizzo('','Bergamo','','');
         $indirizzoDestinazione = new Indirizzo('','Bergamo','','');
         $preventivatore->setIndirizzoPartenza($indirizzoPartenza);
         $preventivatore->setIndirizzoDestinazione($indirizzoDestinazione);
@@ -99,3 +101,4 @@ class SimulazionePreventivatoreIstantaneo {
 
 $t = new SimulazionePreventivatoreIstantaneo();
 $t->load();
+//$t->run();

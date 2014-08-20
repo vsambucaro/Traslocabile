@@ -18,33 +18,44 @@ class SimulazionePreventivoDettaglio {
     {
         $preventivo = new Preventivo();
         //$preventivo->load(72);
-        if (!$preventivo->loadDettaglio(306)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(402)) die ("Preventivo non esiste");
 
-
-        echo "\nStato: ".$preventivo->getStato();
 
         $preventivatore = $preventivo->getPreventivatore();
-        $preventivatore->setKM(35);
-
-        //var_dump($preventivatore);
-
-        $lista_arredi = $preventivo->getListaArredi();
-        if ($lista_arredi)
-        foreach ($lista_arredi as $arredo)
-            echo "\nArredo: ".$arredo->getCampo(Arredo::ID).", paramtro_B:".$arredo->getParteVariabile(Arredo::METRI_LINEARI).", qta=".$arredo->getQta();
+        $result = $preventivatore->elabora();
 
 
+        echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
+        $tabellaArredi = array();
+        $listaArredi = $preventivo->getListaArredi();
+        foreach($listaArredi as $arredo) {
+            $ambiente 	= $arredo->getCampo(Arredo::AMBIENTE);
 
-        $elaborazione = $preventivatore->elabora();
+            $tempArredo = array(
+                'id'=>$arredo->getCampo(Arredo::ID),
+                "ambiente" 	=> $arredo->getCampo(Arredo::AMBIENTE),
+                "arredo" 	=> $arredo->getCampo(Arredo::ARREDO),
+                "variante"	=> $arredo->getCampo(Arredo::VARIANTE),
+                "mc"		=> $arredo->getMC(),
+                "qta"		=> $arredo->getQta()
+            );
 
-        echo "\nELABORAZIONE:\n";
-        echo "\nKM: ".$preventivatore->getKM()."\n";
-        var_dump($elaborazione);
+            echo "\nID:" .$tempArredo['id'].", Arredo: ".$tempArredo['arredo'].", variante: ".$tempArredo['variante'].", mc: ".$tempArredo['mc'];
+            $tabellaArredi[$ambiente][] = $tempArredo;
+        }
 
-        $mc = $preventivatore->getMC();
+        echo "\nLista Servizi: ";
+        $servizi = $preventivo->getListaServiziIstantaneo();
+        //print_r($servizi);
+        if ($servizi)
+            foreach ($servizi as $servizio)
+                echo  "\nServizio: ".$servizio->getCampo(ServizioIstantaneo::SERVIZIO);
 
-        echo "\nMC:\n";
-        var_dump($mc);
+        //$preventivatore->updatePreventivo($preventivo);
+        //$preventivo->save();
+
+        echo "\nRESULT:\n";
+        print_r($result);
 
 
     }

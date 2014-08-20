@@ -27,10 +27,10 @@ abstract class Arredo {
 
     //attributi variabili
     const METRI_LINEARI='METRI LINEARI';
-    const POSTI_A_SEDERE='POSTI_A_SEDERE';
+    const POSTI_A_SEDERE='POSTI A SEDERE';
     const LARGHEZZA='LARGHEZZA';
-    const NUMERO_ANTE='NUMERO_ANTE';
-    const NUMERO_POSTI='NUMERO_POSTI';
+    const NUMERO_ANTE='NUMERO ANTE';
+    const NUMERO_POSTI='NUMERO POSTI';
 
 
     protected $record = array();

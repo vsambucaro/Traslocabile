@@ -50,3 +50,4 @@ require_once 'FatturaFornitore.php';
 require_once 'CalcolatoreIstantaneo.php';
 require_once 'Fornitore.php';
 require_once 'FattureFornitori.php';
+require_once 'CalcolatoreDettaglio.php';
