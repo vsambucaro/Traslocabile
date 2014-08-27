@@ -358,7 +358,7 @@ class ERP
         $uscite  = 0;
 
         while ($row = mysql_fetch_object($res))
-            $uscite += $row->importo;
+            $uscite += array('id_fornitore'=>$row->id_fornitore, 'importo'=>$row->importo);
 
         DBUtils::closeConnection($con);
 
