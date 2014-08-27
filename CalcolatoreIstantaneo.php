@@ -50,7 +50,7 @@ class CalcolatoreIstantaneo {
 
         $tmp_mc = $this->mc;
         //$this->km = 65;
-        //echo "\nKM: ".$this->km;
+      // echo "\nKM: ".$this->km;
         //echo "\nMC : ".$this->mc;
         $this->mc = $this->mc * (1 + Parametri::getAggiustamentoMC());
         //echo "\nMC corretti: ".$this->mc." parametro : ".Parametri::getAggiustamentoMC();

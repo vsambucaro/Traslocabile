@@ -16,7 +16,7 @@ class SimulazionePreventivatoreIstantaneo {
         $preventivo = new Preventivo();
         //306 è il preventivo di test
 
-        if (!$preventivo->loadDettaglio(402)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(429)) die ("Preventivo non esiste");
         //if (!$preventivo->load(359)) die ("Preventivo non esiste");
 
         

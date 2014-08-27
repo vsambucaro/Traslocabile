@@ -52,8 +52,17 @@ class TestFattura {
         echo "\nFine\n";
     }
 
+    public function testPagamentoFatturaBusiness()
+    {
+        $fattura = new FatturaCliente( "000016", 2014 );
+        $pagamento = new Pagamento(2216.7634326132,"2014-08-27","PROVA");
+        $fattura->addPagamento($pagamento);
+        print_r($fattura);
+
+    }
 }
 
 $m = new TestFattura();
 //$m->creaFatturaConsumer();
-$m->creaFatturaBusiness();
+//$m->creaFatturaBusiness();
+$m->testPagamentoFatturaBusiness();
