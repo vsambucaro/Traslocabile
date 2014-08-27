@@ -160,13 +160,13 @@ class FatturaCliente {
 
         $sql ="INSERT INTO pagamenti_clienti_business (numero_fattura, id_cliente, importo, data, descrizione, anno)
         VALUES ('$numero_fattura', '$id_cliente', '$importo','$data','$descrizione', $anno)";
-        echo "\nSQL: ".$sql;
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
 
 
         $sql = "SELECT sum(importo) as somma FROM pagamenti_clienti_business WHERE numero_fattura='$numero_fattura' AND id_cliente=$id_cliente AND anno=$anno";
         $res = mysql_query($sql);
-        echo "\nSQL: ".$sql;
+        //echo "\nSQL: ".$sql;
         $totale_pagato = 0;
         while ($row = mysql_fetch_object($res))
             $totale_pagato = $row->somma;
@@ -184,7 +184,7 @@ class FatturaCliente {
         $anno = $this->anno;
         $con = DBUtils::getConnection();
         $sql = "UPDATE fatture_attive SET stato_pagamento=1 WHERE numero_fattura='".$this->numero_fattura."' AND id_cliente=".$id_cliente." AND anno=$anno";
-        echo "\nSQL: ".$sql;
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
         DBUtils::closeConnection($con);
         $this->stato_pagamento = $this::FATTURA_SALDATA;
