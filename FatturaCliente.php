@@ -203,6 +203,9 @@ class FatturaCliente {
         $anno = $this->anno;
 
         $sql = "SELECT * FROM pagamenti_clienti WHERE numero_fattura=".$this->numero_fattura." AND id_cliente=".$id_cliente." AND anno=$anno";
+        if ($this->tipologia_cliente == Customer::CLIENTE_BUSINESS)
+            $sql = "SELECT * FROM pagamenti_clienti_business WHERE numero_fattura=".$this->numero_fattura." AND id_cliente=".$id_cliente." AND anno=$anno";
+
         $res = mysql_query($sql);
         $lista = array();
         while ($row = mysql_fetch_object($res))
