@@ -18,7 +18,7 @@ class TestERP {
         $filter = array();
         $filter[ERP::FILTRO_PERIODO_DAL] = '2014-01-01 00:00:00';
         $filter[ERP::FILTRO_PERIODO_AL] = '2014-12-31 00:00:00';
-        $res = $erp->getFatturato($filter);
+        $res = $erp->getFatturato(null, 89);
         //print_r($res);
 
         foreach ($res as $id_cliente => $fatture)
@@ -82,5 +82,6 @@ class TestERP {
 }
 
 $m = new TestERP();
-$m->testListaOrdiniFornitoriNonFatturati();
+$m->test();
+//$m->testListaOrdiniFornitoriNonFatturati();
 //$m->listaOrdiniDaFatturare();

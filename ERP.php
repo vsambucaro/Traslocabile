@@ -121,30 +121,30 @@ class ERP
         $sql = "SELECT * FROM fatture_attive fa WHERE TRUE";
 
 
-        if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
+        if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
         {
             $sql .="  AND fa.data BETWEEN '".$periodo[ERP::FILTRO_PERIODO_DAL]."' AND '".$periodo[ERP::FILTRO_PERIODO_AL]."'";
         }
         else
         {
-            if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
+            if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo))
             {
                 $sql .= "  AND fa.data>='".$periodo[ERP::FILTRO_PERIODO_DAL]."'";
             }
-            if (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
+            if ($periodo && array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo))
             {
                 $sql .= " AND fa.data<='".$periodo[ERP::FILTRO_PERIODO_AL]."'";
             }
         }
 
         if ($filtro_tipologia_cliente)
-            $sql .= "AND fa.tipologia_cliente=".$filtro_tipologia_cliente;
+            $sql .= " AND fa.tipologia_cliente=".$filtro_tipologia_cliente;
 
         if ($filtro_id_cliente)
-            $sql .= "AND fa.id_cliente=".$filtro_id_cliente;
+            $sql .= " AND fa.id_cliente=".$filtro_id_cliente;
 
         if ($numero_fattura && $anno_fattura)
-            $sql .= "AND fa.numero_fattura=".$numero_fattura." AND fa.anno=".$anno_fattura;
+            $sql .= " AND fa.numero_fattura=".$numero_fattura." AND fa.anno=".$anno_fattura;
 
         $con = DBUtils::getConnection();
         $res = mysql_query($sql);
