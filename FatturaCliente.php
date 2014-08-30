@@ -56,17 +56,24 @@ class FatturaCliente {
             $customer->tipologia_cliente = $row->tipologia_cliente;
 
             $this->cliente = $customer;
+
+            $this->importo += $row->importo;
+            $this->imponibile += $row->imponibile;
+            $this->iva += $row->iva;
+
         }
         DBUtils::closeConnection($con);
 
         $this->lista_ordini = $this->loadOrdiniFattura($numero_fattura, $anno, $customer->tipologia_cliente);
 
+        /*
         foreach ($this->lista_ordini as $ordine)
         {
             $this->importo += $ordine->getImporto();
             $this->imponibile += $ordine->getImponibile();
             $this->iva += $ordine->getIva();
         }
+        */
 
     }
 
@@ -121,10 +128,10 @@ class FatturaCliente {
 
         $id_ordine = $this->getOrdineByFattura($this->numero_fattura, $this->anno);
         $ordine = new OrdineCliente($id_ordine);
-        $saldata = $ordine->addPagamentoCliente($pagamento);
+        $saldata = $ordine->addPagamentoCliente($pagamento, $this->numero_fattura, $this->anno);
 
-        if ($saldata)
-            $this->setFatturaSaldata();
+        if ($pagamento->importo >= $this->importo)
+               $this->setFatturaSaldata();
     }
 
     /**
@@ -175,10 +182,11 @@ class FatturaCliente {
 
         if ($totale_pagato>=$this->importo)
             $this->setFatturaSaldata();
-
     }
 
-    private function setFatturaSaldata()
+
+
+    public function setFatturaSaldata()
     {
         $id_cliente = $this->cliente->id_cliente;
         $anno = $this->anno;
@@ -209,7 +217,7 @@ class FatturaCliente {
         $res = mysql_query($sql);
         $lista = array();
         while ($row = mysql_fetch_object($res))
-            $lista[] = new Pagamento($row->importo, $row->data, $row->descrizione);
+            $lista[] = new Pagamento($row->importo, $row->data, $row->descrizione, $this->numero_fattura, $this->anno);
 
         DBUtils::closeConnection($con);
         return $lista;

@@ -13,11 +13,16 @@ class Pagamento
     public $descrizione;
     public $data;
 
-    public function __construct($importo, $data, $descrizione)
+    public $numero_fattura;
+    public $anno;
+
+    public function __construct($importo, $data, $descrizione, $numero_fattura = null, $anno = null)
     {
         $this->importo = $importo;
         $this->data = $data;
         $this->descrizione = $descrizione;
+        $this->numero_fattura = $numero_fattura;
+        $this->anno = $anno;
     }
 
 } 

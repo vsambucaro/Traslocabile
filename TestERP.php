@@ -68,6 +68,27 @@ class TestERP {
               echo  "\nNum.Ordine: ".$item['id_ordine']."\tImporto: ".$item['importo']."\tImponibile:".$item['imponibile']
                 ."\tIva:".$item['iva']."\tTipoCliente: ".$item['tipologia_cliente']."\tDataOrdine:".$item['data_ordine']."\tDataFineLavori:".$item['data_completamento_lavori'];
 
+              //verifica se già è stato fatturato un acconto
+              if ($item['tipologia_cliente'] == Customer::CLIENTE_CONSUMER)
+              {
+                  $ordine = new OrdineCliente($item['id_ordine']);
+                  $lista_fatture = $ordine->getNumeroFattura();
+                  $totale_fatturato= 0;
+                  foreach ($lista_fatture as $record)
+                  {
+                      $numero_fattura = $record['numero_fattura'];
+                      $anno = $record['anno'];
+                      echo "\nFattura $numero_fattura, $anno";
+                      $fattura = new FatturaCliente($numero_fattura, $anno);
+
+                      $totale_fatturato += $fattura->getImporto();
+                  }
+
+                  echo "\nImporto già fatturato: ".$totale_fatturato;
+                  echo "\nRimanenza importo da fatturare: ". ($item['importo'] - $totale_fatturato);
+              }
+
+
             }
             echo "\n========================================";
         }
@@ -82,6 +103,6 @@ class TestERP {
 }
 
 $m = new TestERP();
-$m->test();
+//$m->test();
 //$m->testListaOrdiniFornitoriNonFatturati();
-//$m->listaOrdiniDaFatturare();
+$m->listaOrdiniDaFatturare();

@@ -60,7 +60,7 @@ class Ordine extends Preventivo {
     /**
      * @param Pagamento $pagamento oggetto contenenti gli estremi del pagamento dell'utente
      */
-    public function addPagamentoCliente(Pagamento $pagamento)
+    public function addPagamentoCliente(Pagamento $pagamento, $numero_fattura = null, $anno=null)
     {
         $con = DBUtils::getConnection();
 
@@ -69,11 +69,10 @@ class Ordine extends Preventivo {
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
 
-        $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione)
-        VALUES ('$id_ordine', '$importo','$data','$descrizione')";
+        $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione, numero_fattura, anno)
+        VALUES ('$id_ordine', '$importo','$data','$descrizione','$numero_fattura', '$anno')";
         $res = mysql_query($sql);
         $ret = false;
-        if ($res) $ret = mysql_insert_id();
 
 
         if ($this->getSaldoCliente()<=0)
@@ -82,7 +81,7 @@ class Ordine extends Preventivo {
             $con = DBUtils::getConnection();
             $sql = "UPDATE preventivi SET saldato_cliente=1 WHERE id_preventivo=".$this->id_preventivo;
             $res = mysql_query($sql);
-            $ret = $res;
+            $ret = true;
         }
 
         DBUtils::closeConnection($con);

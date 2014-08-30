@@ -41,7 +41,7 @@ class FattureClienti {
         return $result;
     }
 
-    public  function creaNuovaFattura($lista_ordini, Customer $cliente, $data_fattura = null)
+    public  function creaNuovaFattura($lista_ordini, Customer $cliente, $data_fattura = null, $imponibile_fattura = null, $iva_fattura = null)
     {
         if (!$cliente)
         {
@@ -58,13 +58,13 @@ class FattureClienti {
 
         $progressivo_fattura = $this->getProgressivoFattura();
 
-        if ($this->creaFattura($lista_ordini, $cliente, $progressivo_fattura, $data_fattura))
+        if ($this->creaFattura($lista_ordini, $cliente, $progressivo_fattura, $data_fattura, $imponibile_fattura, $iva_fattura))
             return $progressivo_fattura;
 
         return null;
     }
 
-    private function creaFattura($lista_ordini, Customer $cliente, $progressivo_fattura , $data_fattura = null)
+    private function creaFattura($lista_ordini, Customer $cliente, $progressivo_fattura , $data_fattura = null, $imponibile_fattura =null, $iva_fattura = null)
     {
 
         $con = DBUtils::getConnection();
@@ -91,6 +91,13 @@ class FattureClienti {
             $imponibile += $ordine->getImponibile();
             $iva += $ordine->getIva();
 
+        }
+
+        if ($imponibile_fattura && $iva_fattura)
+        {
+            $imponibile = $imponibile_fattura;
+            $iva = $iva_fattura;
+            $importo = $imponibile + $iva;
         }
 
         $id_cliente = $cliente->id_cliente;

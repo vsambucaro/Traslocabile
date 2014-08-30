@@ -49,7 +49,8 @@ class ERP
     {
         $lista = array();
         $con = DBUtils::getConnection();
-        $sql = "SELECT * FROM preventivi WHERE id_preventivo NOT IN (SELECT id_ordine FROM ordini_fatture_attive) AND stato = 'Completato' AND tipo=".OrdineCliente::TIPO_ORDINE;
+        //$sql = "SELECT * FROM preventivi WHERE id_preventivo NOT IN (SELECT id_ordine FROM ordini_fatture_attive) AND stato = 'Completato' AND tipo=".OrdineCliente::TIPO_ORDINE;
+        $sql = "SELECT * FROM preventivi WHERE stato_fatturazione=0 AND stato = 'Completato' AND tipo=".OrdineCliente::TIPO_ORDINE;
 
         if ($periodo)
             if (array_key_exists(ERP::FILTRO_PERIODO_DAL, $periodo) && (array_key_exists(ERP::FILTRO_PERIODO_AL, $periodo)) )
@@ -71,9 +72,12 @@ class ERP
         if ($filtro_tipologia_cliente)
             $sql .= "AND tipologia_cliente=".$filtro_tipologia_cliente;
 
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
+
         while ($row = mysql_fetch_object($res))
         {
+            //echo "\nProcessing row: ".$row->id_preventivo;
             if ($filtro_cliente)
                 if (!in_array($row->id_cliente, $filtro_cliente))
                     continue;

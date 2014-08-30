@@ -52,7 +52,7 @@ class OrdineCliente extends Preventivo {
         $res = mysql_query($sql);
         $lista = array();
         while ($row = mysql_fetch_object($res))
-            $lista[] = new Pagamento($row->importo, $row->data, $row->descrizione);
+            $lista[] = new Pagamento($row->importo, $row->data, $row->descrizione, $row->numero->fattura, $row->anno);
 
         DBUtils::closeConnection($con);
         return $lista;
@@ -61,7 +61,7 @@ class OrdineCliente extends Preventivo {
     /**
      * @param Pagamento $pagamento oggetto contenenti gli estremi del pagamento dell'utente
      */
-    public function addPagamentoCliente(Pagamento $pagamento)
+    public function addPagamentoCliente(Pagamento $pagamento, $numero_fattura = null, $anno=null)
     {
         $con = DBUtils::getConnection();
 
@@ -70,8 +70,8 @@ class OrdineCliente extends Preventivo {
         $data = $pagamento->data;
         $descrizione = $pagamento->descrizione;
 
-        $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione)
-        VALUES ('$id_ordine', '$importo','$data','$descrizione')";
+        $sql ="INSERT INTO pagamenti_clienti (id_ordine, importo, data, descrizione, numero_fattura, anno)
+        VALUES ('$id_ordine', '$importo','$data','$descrizione','$numero_fattura', '$anno')";
         $res = mysql_query($sql);
         $ret = false;
 
@@ -98,19 +98,30 @@ class OrdineCliente extends Preventivo {
         $con = DBUtils::getConnection();
         $sql ="SELECT numero_fattura, anno FROM ordini_fatture_attive WHERE id_ordine=".$this->id_ordine;
         $res = mysql_query($sql);
+        $lista_fatture = array();
         $numero_fattura = null;
         $anno = null;
+
         while ($row = mysql_fetch_object($res))
         {
             $numero_fattura = $row->numero_fattura;
             $anno = $row->anno;
+            $lista_fatture[] = array('numero_fattura'=>$numero_fattura, 'anno'=>$anno);
         }
 
         DBUtils::closeConnection($con);
 
-        if ($numero_fattura && $anno)
-            return array('numero_fattura'=>$numero_fattura, 'anno'=>$anno);
-        else
-            return null;
+            return $lista_fatture;
+    }
+
+    /**
+     * serve a indicare che l'ordine è stato tutto fatturato
+     */
+    public function setStatoFatturazioneCompleto()
+    {
+        $con = DBUtils::getConnection();
+        $sql = "UPDATE preventivi SET stato_fatturazione=1 WHERE id_preventivo=".$this->id_preventivo;
+        $res = mysql_query($sql);
+        DBUtils::closeConnection($con);
     }
 } 
