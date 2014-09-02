@@ -159,6 +159,19 @@ class FatturaFornitore {
     }
 
 
+    public function setFatturaSaldata()
+    {
+        $id_fornitore = $this->fornitore->id_fornitore;
+        $anno = $this->anno;
+        $con = DBUtils::getConnection();
+        $sql = "UPDATE fatture_passive SET stato_pagamento=1 WHERE numero_fattura='".$this->numero_fattura."' AND id_fornitore=".$id_fornitore." AND anno=$anno";
+        //echo "\nSQL: ".$sql;
+        $res = mysql_query($sql);
+        DBUtils::closeConnection($con);
+        $this->stato_pagamento = $this::FATTURA_SALDATA;
+
+
+    }
     /**
      * @return array Lista pagamenti per specifica fattura
      */
