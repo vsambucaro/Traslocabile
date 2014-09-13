@@ -46,7 +46,75 @@ class TestPreventivatoreBusiness {
         echo "\nFINE";
 
     }
+
+    public function loadPreventivo()
+    {
+        $id_preventivo = 5;
+        $preventivo = new PreventivoBusiness();
+        $preventivo->loadDettaglio($id_preventivo);
+        $preventivatore = $preventivo->getPreventivatore();
+        $result = $preventivatore->elabora();
+        echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
+
+        var_dump($result);
+
+
+        $listaItems = $preventivo->getItems();
+        foreach($listaItems as $item) {
+
+            $tempItem = array(
+                'id'=>$item->id,
+                "descrizione" 	=> $item->descrizione,
+                "lunghezza" 	=> $item->lunghezza,
+                "altezza"	=> $item->altezza,
+                "profondita" => $item->profondita,
+                "qta"		=> $item->qta,
+                "mc"		=> $item->mc
+            );
+
+            echo "\nID:" .$tempItem['id'].", descrizione: ".$tempItem['descrizione'].
+                ", lunghezza: ".$tempItem['lunghezza'].", mc: ".$tempItem['mc'].
+                ", altezza: ".$tempItem['altezza'].", profondità: ".$tempItem['profondita'].
+                ", qta: ".$tempItem['qta'];
+
+        }
+
+        echo "\nLista Servizi: ";
+        $servizi = $preventivo->getListaServiziIstantaneo();
+        //print_r($servizi);
+        if ($servizi)
+            foreach ($servizi as $servizio)
+                echo  "\nServizio: ".$servizio->getCampo(ServizioIstantaneo::SERVIZIO);
+
+    }
+
+    public function testUpdate()
+    {
+        $id_preventivo = 5;
+        $preventivo = new PreventivoBusiness();
+        $preventivo->loadDettaglio($id_preventivo);
+        $preventivatore = $preventivo->getPreventivatore();
+
+        //Aggiungo una voce extra
+        $voce_extra = new VocePreventivoExtra(VocePreventivoExtra::POSITIVO, "EXTRA COSTO PER LA POSIZIONE", 100);
+        $preventivatore->addVocePreventivoExtra($voce_extra);
+        $result = $preventivatore->elabora();
+
+        //Aggiorno tutto e salvo
+        $preventivatore->updatePreventivo($preventivo);
+        $preventivo->save();
+
+
+
+        echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
+
+        var_dump($result);
+
+
+    }
 }
 
 $m = new TestPreventivatoreBusiness();
-$m->run();
+//$m->run();
+$m->loadPreventivo();
+//$m->testUpdate();

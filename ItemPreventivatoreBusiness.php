@@ -14,6 +14,7 @@ class ItemPreventivatoreBusiness {
     public $altezza;
     public $profondita;
     public $qta;
+    public $id;
 
     public function __construct($descrizione, $mc = null, $lunghezza = null, $altezza = null, $profondita = null, $qta = 1)
     {

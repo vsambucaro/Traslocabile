@@ -316,6 +316,7 @@ class PreventivatoreBusiness {
         $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
         $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
+        $preventivo->setListaVociExtra($this->lista_voci_extra);
         $preventivo->save();
 
         return $preventivo;
@@ -331,13 +332,30 @@ class PreventivatoreBusiness {
             $preventivo = $this->preventivo;
         //$preventivo->setPartenza($this->indirizzo_partenza);
         //$preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setPartenza($this->indirizzo_partenza);
+        $preventivo->setDestinazione($this->indirizzo_destinazione);
         $preventivo->setItems($this->lista_item);
         $preventivo->setServiziAccessoriPartenza($this->lista_servizi_partenza);
         $preventivo->setServiziAccessoriDestinazione($this->lista_servizi_destinazione);
-        $preventivo->setListaVociExtra($this->lista_voci_extra);
-        $preventivo->setPartenza($this->indirizzo_partenza);
-        $preventivo->setDestinazione($this->indirizzo_destinazione);
+        $preventivo->setImporto($this->prezzo_cliente_con_iva);
+        $preventivo->setImponibile($this->prezzo_cliente_senza_iva);
+        $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva);
+        $preventivo->setStato($this->stato);
+        $preventivo->setNote($this->note);
+        $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
+        $preventivo->setDataSopraluogo($this->data_sopraluogo);
         $preventivo->setMC($this->mc);
+        $preventivo->setPianiDaSalire($this->getPianiDaSalire());
+        $preventivo->setPeso($this->getPeso());
+        $preventivo->setMontaggio($this->getMontaggio());
+        $preventivo->setMontaggioInLocaliDiPreggio($this->getMontaggioInLocaliDiPreggio());
+        $preventivo->setPagamentoContrassegno($this->getPagamentoContrassegno());
+        $preventivo->importo_commessa_depositario = $this->importo_commessa_depositario;
+        $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
+        $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
+        $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
+        $preventivo->setListaVociExtra($this->lista_voci_extra);
+
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);
         //$preventivo->save();
@@ -358,7 +376,7 @@ class PreventivatoreBusiness {
 
     public function getNoteInterne() { return $this->note_interne; }
 
-    public function setReferencePreventivo(Preventivo $ref)
+    public function setReferencePreventivo(PreventivoBusiness $ref)
     {
         $this->preventivo = $ref;
     }

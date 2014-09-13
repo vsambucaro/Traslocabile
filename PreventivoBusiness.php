@@ -69,6 +69,8 @@ class PreventivoBusiness {
     private $montaggio_locali_preggio = 0;
     private $pagamento_contrassegno = 0;
 
+    public  $tipo_algoritmo = null;
+
 
     public function __construct()
     {
@@ -269,6 +271,8 @@ class PreventivoBusiness {
         $peso = $this->peso;
         $pagamento_contrassegno = $this->pagamento_contrassegno ? 1: 0;
 
+        $algoritmo = $this->tipo_algoritmo;
+
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
@@ -276,7 +280,7 @@ importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_cit
 destinazione_codice_provincia, destinazione_codice_citta, note_interne,
 partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
 destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc, tipologia_cliente,
-piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
+piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algorimo)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -292,7 +296,8 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
          '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
          '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano',
          '$this->mc',1,
-         '$piano', '$montaggio', '$montaggio_locali_preggio', '$pagamento_contrassegno'
+         '$piano', '$montaggio', '$montaggio_locali_preggio', '$pagamento_contrassegno',
+         '$algoritmo'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -344,7 +349,8 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
           piano = $piano,
           montaggio = $montaggio,
           montaggio_locali_preggio = $montaggio_locali_preggio,
-          pagamento_contrassegno = $pagamento_contrassegno
+          pagamento_contrassegno = $pagamento_contrassegno,
+          algoritmo = $algoritmo
 
           WHERE id_preventivo='$id_preventivo'
         ";
@@ -397,7 +403,7 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
                 $valore = $voce->getValore();
                 $sql ="INSERT INTO voci_preventivo_extra (id_preventivo, descrizione, segno, valore)
               VALUES ('$id_preventivo', '$descrizione', '$segno', '$valore')";
-
+                //echo "\nSQL: ".$sql;
                 $res = mysql_query($sql);
             }
 
@@ -539,7 +545,7 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
             $this->montaggio_locali_preggio = $row->montaggio_locali_preggio;
             $this->montaggio = $row->montaggio;
             $this->pagamento_contrassegno = $row->pagamento_contrassegno;
-
+            $this->tipo_algoritmo = $row->algoritmo;
 
             $found = true;
         }
@@ -583,6 +589,7 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
             $item->profondita = $row->dim_P;
             $item->qta = $row->qta;
             $item->mc = $row->mc;
+            $item->id = $row->id;
             $this->lista_item[] = $item;
             $found = true;
         }
@@ -938,8 +945,13 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
         $preventivatore->setGiorniDeposito($this->giorni_deposito);
         $preventivatore->setNote($this->note);
         $preventivatore->setFlagSopraluogo($this->flag_sopraluogo);
-
+        $preventivatore->setMontaggioInLocaliDiPreggio($this->montaggio_locali_preggio);
+        $preventivatore->setMontaggio($this->montaggio);
+        $preventivatore->setPianiDaSalire($this->piani_da_salire);
+        $preventivatore->setPagamentoContrassegno($this->pagamento_contrassegno);
+        $preventivatore->setAlgoritmo($this->tipo_algoritmo);
         $preventivatore->setReferencePreventivo($this);
+
         //$preventivatore->setCliente($this->customer); TODO
 
         return $preventivatore;

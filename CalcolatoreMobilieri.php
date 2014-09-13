@@ -82,6 +82,18 @@ class CalcolatoreMobilieri {
         $totale = $prezzo_trazione + $prezzo_salita_al_piano +
             $prezzo_scarico_presso_cliente + $prezzo_montaggio + $prezzo_contrassegno;
 
+
+        //aggiunge o rimuove le voci extra
+        $valore_voci_extra  = 0;
+        foreach ($this->parametri_calcolo->lista_voci_extra as $voce) {
+            if ($voce->getSegno() == VocePreventivoExtra::POSITIVO)
+                $valore_voci_extra += $voce->getValore();
+            else
+                $valore_voci_extra -= $voce->getValore();
+        }
+
+        $totale += $valore_voci_extra;
+
         $sconto =  ($totale * $this->parametri_calcolo->sconto);
 
         $totale_scontato = $totale - $sconto;
