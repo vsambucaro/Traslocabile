@@ -88,11 +88,11 @@ class CalcolatoreCucinieri {
             $this->parametri_calcolo->indirizzo_destinazione->toGoogleAddress());
         $km =  $info['distance'];
 
-        $costo_scarico_ricarico_hub = TariffeSnaidero::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali);
-        $costo_trazione = TariffeSnaidero::getCostoTrazione($mc_mese,  $km, $mc_attuali);
-        $costo_scarico = TariffeSnaidero::getCostoScarico($mc_mese, $mc_attuali);
-        $costo_salita_piano = TariffeSnaidero::getCostoSalitaPiano($mc_mese, $mc_attuali);
-        $costo_montaggio = TariffeSnaidero::getCostoMontaggio($mc_mese, $mc_attuali);
+        $costo_scarico_ricarico_hub = TariffeCucinieri::getCostoScaricoRicaricoHub($mc_mese, $mc_attuali);
+        $costo_trazione = TariffeCucinieri::getCostoTrazione($mc_mese,  $km, $mc_attuali);
+        $costo_scarico = TariffeCucinieri::getCostoScarico($mc_mese, $mc_attuali);
+        $costo_salita_piano = TariffeCucinieri::getCostoSalitaPiano($mc_mese, $mc_attuali);
+        $costo_montaggio = TariffeCucinieri::getCostoMontaggio($mc_mese, $mc_attuali);
 
         $valore_voci_extra  = 0;
         foreach ($this->parametri_calcolo->lista_voci_extra as $voce) {

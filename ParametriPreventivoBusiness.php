@@ -12,8 +12,6 @@ class ParametriPreventivoBusiness {
     public $peso;
     public $sede_logistica;
     public $giorni_deposito;
-    public $partenza;
-    public $destinazione;
     public $piani_da_salire = 0;
     public $montaggio;
     public $montaggio_in_locali_preggio;
@@ -26,6 +24,9 @@ class ParametriPreventivoBusiness {
     public $lista_servizi_destinazione;
 
     public $sconto;
+
+    public $indirizzo_partenza;
+    public $indirizzo_destinazione;
 
 
 } 

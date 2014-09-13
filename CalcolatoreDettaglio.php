@@ -322,6 +322,14 @@ class CalcolatoreDettaglio {
 
         $prezzo_cliente_con_iva = $prezzo_cliente_senza_iva * (1 + Parametri::getIVA());
 
+        $tariffa_trasportatore = $costo_trazione;
+        $tariffa_traslocatore_partenza = $costo_servizio_smontaggio_imballo_carico +
+            $costo_servizio_imballo_carico ;
+
+        $tariffa_traslocatore_destinazione = $costo_servizio_salita + $costo_servizio_montaggio + $costo_servizio_scarico;
+
+        $tariffa_deposito = $deposito;
+
         $result = array('costo_servizio_smontaggio_imballo_carico'=>$costo_servizio_smontaggio_imballo_carico,
             'costo_servizio_imballo_carico'=>$costo_servizio_imballo_carico,
             'costo_trazione'=>$costo_trazione,
@@ -332,7 +340,12 @@ class CalcolatoreDettaglio {
             'costo_servizi_accessori_partenza'=>$costo_servizi_accessori_partenza,
             'costo_servizi_accessori_destinazione'=>$costo_servizi_accessori_destinazione,
             'prezzo_cliente_senza_iva'=>$prezzo_cliente_senza_iva,
-            'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva
+            'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva,
+            'tariffa_trasportatore' =>$tariffa_trasportatore,
+            'tariffa_traslocatore_partenza' => $tariffa_traslocatore_partenza,
+            'tariffa_traslocatore_destinazione' => $tariffa_traslocatore_destinazione,
+            'tariffa_depositario' => $tariffa_deposito
+
         );
 
         return $result;

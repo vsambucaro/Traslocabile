@@ -34,9 +34,10 @@ class CalcolatoreMobilieri {
         if ($this->parametri_calcolo->giorni_deposito > 10)
             $prezzo_giacenza = $this->parametri_calcolo->giorni_deposito * $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::giacenza] * $this->parametri_calcolo->mc_trasportati;
 
+        /*
         $prezzo_scarico_carico_presso_deposito = $this->parametri_calcolo->parametri[ParametriPreventivoBusinessMobilieri::tariffa_scarico_ricarico_fino_sede_loggistica] *
             $this->parametri_calcolo->mc_trasportati * $incremento_peso_volume;
-
+*       /
         /*
         $prezzo_trazione_sede_cliente = 0;
         $km_sede_cliente = $this->calcolaKMSedeCliente();
@@ -87,7 +88,25 @@ class CalcolatoreMobilieri {
         $tariffa_finale = $totale_scontato * (1 + $this->parametri_calcolo->margine_traslocabile);
 
 
-        return $tariffa_finale;
+
+        $prezzo_cliente_con_iva = $tariffa_finale * (1 + Parametri::getIVA());
+
+        $tariffa_trasportatore = $prezzo_trazione;
+        $tariffa_traslocatore_partenza = 0;
+        $tariffa_traslocatore_destinazione = $prezzo_salita_al_piano + $prezzo_scarico_presso_cliente + $prezzo_montaggio;
+        $tariffa_deposito = $prezzo_giacenza;
+
+        return array(
+            'prezzo_cliente_senza_iva'=>$tariffa_finale,
+            'prezzo_cliente_con_iva'=>$prezzo_cliente_con_iva,
+            'mc'=>$this->parametri_calcolo->mc_trasportati,
+            'tariffa_trasportatore' =>$tariffa_trasportatore,
+            'tariffa_traslocatore_partenza' => $tariffa_traslocatore_partenza,
+            'tariffa_traslocatore_destinazione' => $tariffa_traslocatore_destinazione,
+            'tariffa_depositario' => $tariffa_deposito
+        );
+
+
 
     }
 

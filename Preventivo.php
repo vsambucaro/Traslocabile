@@ -47,10 +47,10 @@ class Preventivo {
 
     private $log;
 
-    protected $importo_commessa_trasportatore;
-    protected $importo_commessa_depositario;
-    protected $importo_commessa_traslocatore_partenza;
-    protected $importo_commessa_traslocatore_destinazione;
+    public $importo_commessa_trasportatore;
+    public $importo_commessa_depositario;
+    public $importo_commessa_traslocatore_partenza;
+    public $importo_commessa_traslocatore_destinazione;
 
     protected $imponibile;
     protected $iva;

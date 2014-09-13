@@ -22,8 +22,13 @@ class PreventivatoreDettagliato extends Preventivatore
     private $lista_voci_extra = array();
     private $preventivo = null;
 
+    public $importo_commessa_trasportatore;
+    public $importo_commessa_depositario;
+    public $importo_commessa_traslocatore_partenza;
+    public $importo_commessa_traslocatore_destinazione;
 
-   /**
+
+    /**
      * @param $id_arredo
      * @param null $parte_variabile
      * @param int $qta
@@ -196,6 +201,14 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $calcolatore->lista_voci_extra = $this->lista_voci_extra;
         $result = $calcolatore->elabora();
 
+        $this->prezzo_cliente_con_iva = round($result['prezzo_cliente_con_iva'], 2);
+        $this->prezzo_cliente_senza_iva = round($result['prezzo_cliente_senza_iva'],2);
+
+
+        $this->importo_commessa_trasportatore = round($result['tariffa_trasportatore'], 2);
+        $this->importo_commessa_traslocatore_partenza = round($result['tariffa_traslocatore_partenza'], 2);
+        $this->importo_commessa_traslocatore_destinazione = round($result['tariffa_traslocatore_destinazione'], 2);
+        $this->importo_commessa_depositario = round($result['tariffa_depositario'], 2);
 
         return $result;
     }
@@ -235,6 +248,11 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
         $preventivo->setServiziIstantaneo($this->lista_servizi);
+        $preventivo->importo_commessa_depositario = $this->importo_commessa_depositario;
+        $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
+        $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
+        $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
+
         $preventivo->save();
 
         return $preventivo;
@@ -262,6 +280,11 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
         $preventivo->setIva($this->prezzo_cliente_con_iva - $this->prezzo_cliente_senza_iva );
         $preventivo->setMC($this->mc);
         $preventivo->setServiziIstantaneo($this->lista_servizi);
+        $preventivo->importo_commessa_depositario = $this->importo_commessa_depositario;
+        $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
+        $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
+        $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
+
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);
         //$preventivo->save();

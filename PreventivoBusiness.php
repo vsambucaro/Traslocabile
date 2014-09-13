@@ -46,14 +46,29 @@ class PreventivoBusiness {
 
     protected $log;
 
-    protected $importo_commessa_trasportatore;
-    protected $importo_commessa_depositario;
-    protected $importo_commessa_traslocatore_partenza;
-    protected $importo_commessa_traslocatore_destinazione;
+    public $importo_commessa_trasportatore;
+    public $importo_commessa_depositario;
+    public $importo_commessa_traslocatore_partenza;
+    public $importo_commessa_traslocatore_destinazione;
 
     protected $imponibile;
     protected $iva;
     protected $mc;
+
+    protected $partenza_localizzazione;
+    protected $partenza_localizzazione_tipo;
+    protected $partenza_localizzazione_tipo_piano;
+
+    protected $destinazione_localizzazione;
+    protected $destinazione_localizzazione_tipo;
+    protected $destinazione_localizzazione_tipo_piano;
+
+    private $piani_da_salire = 0;
+    private $peso = 0;
+    private $montaggio=0;
+    private $montaggio_locali_preggio = 0;
+    private $pagamento_contrassegno = 0;
+
 
     public function __construct()
     {
@@ -215,7 +230,6 @@ class PreventivoBusiness {
 
     //crea il record preventivo e ritorna l'ID del preventivo
     private function _savePreventivo($id_preventivo = null) {
-
         $con = DBUtils::getConnection();
         $data = date('Y-m-d');
         $id_cliente = $this->id_cliente;
@@ -244,16 +258,25 @@ class PreventivoBusiness {
         $data_trasloco = $this->data_trasloco;
         $id_agenzia = $this->id_agenzia;
         $flag_sopraluogo = $this->flag_sopraluogo;
-        $note = $this->note;
+        $note = mysql_real_escape_string($this->note);
         $imponibile = $this->imponibile;
         $iva = $this->iva;
+        $note_interne = mysql_real_escape_string($this->note_interne);
 
+        $piano = $this->piani_da_salire;
+        $montaggio = $this->montaggio ? 1: 0;
+        $montaggio_locali_preggio = $this->montaggio_locali_preggio ? 1: 0;
+        $peso = $this->peso;
+        $pagamento_contrassegno = $this->pagamento_contrassegno ? 1: 0;
 
         $sql ="INSERT INTO preventivi (data, id_cliente, partenza_cap, partenza_citta, partenza_provincia, partenza_indirizzo, destinazione_cap, destinazione_citta, destinazione_provincia,
 destinazione_indirizzo, importo, stato, email_cliente, id_trasportatore, id_traslocatore_partenza, id_traslocatore_destinazione,
 data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositario, importo_commessa_trasportatore, importo_commessa_depositario, importo_commessa_traslocatore_partenza,
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
-destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc, note_interne)
+destinazione_codice_provincia, destinazione_codice_citta, note_interne,
+partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
+destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc, tipologia_cliente,
+piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -265,7 +288,11 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
          '$this->importo_commessa_trasportatore', '$this->importo_commessa_depositario', '$this->importo_commessa_traslocatore_partenza', '$this->importo_commessa_traslocatore_destinazione',
          '$imponibile','$iva',
          '$partenza_codice_citta', '$partenza_codice_provincia',
-         '$destinazione_codice_provincia', '$destinazione_codice_citta', '1','$this->mc', $this->note_interne
+         '$destinazione_codice_provincia', '$destinazione_codice_citta', '$note_interne',
+         '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
+         '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano',
+         '$this->mc',1,
+         '$piano', '$montaggio', '$montaggio_locali_preggio', '$pagamento_contrassegno'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -305,14 +332,26 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
           partenza_codice_provincia = '$partenza_codice_provincia',
           destinazione_codice_citta = '$destinazione_codice_citta',
           destinazione_codice_provincia = '$destinazione_codice_provincia',
+          note_interne = '$note_interne',
+          partenza_localizzazione = '$this->partenza_localizzazione',
+          partenza_localizzazione_tipo = '$this->partenza_localizzazione_tipo',
+          partenza_localizzazione_tipo_piano = '$this->partenza_localizzazione_tipo_piano',
+          destinazione_localizzazione = '$this->destinazione_localizzazione',
+          destinazione_localizzazione_tipo = '$this->destinazione_localizzazione_tipo',
+          destinazione_localizzazione_tipo_piano = '$this->destinazione_localizzazione_tipo_piano',
+          mc = '$this->mc',
           tipologia_cliente='1',
-          mc='$this->mc',
-          note_interne = '$this->note_interne'
+          piano = $piano,
+          montaggio = $montaggio,
+          montaggio_locali_preggio = $montaggio_locali_preggio,
+          pagamento_contrassegno = $pagamento_contrassegno
+
           WHERE id_preventivo='$id_preventivo'
         ";
 
         }
 
+        //echo "\nSQL: ".$sql;
         $res = mysql_query($sql);
 
         if (!$res) {
@@ -340,6 +379,9 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
             $sql ="INSERT INTO items_preventivo (descrizione, id_preventivo, qta, dim_A, dim_P, dim_L , mc)
              VALUES ('$descrizione', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L', '$mc')";
             $res = mysql_query($sql);
+            if (!$res) {
+                die ("ERRORE: ".$sql);
+            }
         }
 
         DBUtils::closeConnection($con);
@@ -493,6 +535,10 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
             $this->mc = $row->mc;
             $this->note_interne = $row->note_interne;
             $this->tipo = $row->tipo;
+            $this->piani_da_salire = $row->piano;
+            $this->montaggio_locali_preggio = $row->montaggio_locali_preggio;
+            $this->montaggio = $row->montaggio;
+            $this->pagamento_contrassegno = $row->pagamento_contrassegno;
 
 
             $found = true;
@@ -1024,17 +1070,28 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
         $totaliMC[$this->id_traslocatore_destinazione] = $totaliMC[$this->id_traslocatore_destinazione] + $mc;
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc;
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_trasportatore]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_trasportatore] - $imponibile,2);
+
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $imponibile, $iva, $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_traslocatore_partenza]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_partenza] - $imponibile,2);
+
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $imponibile, $iva, $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_traslocatore_destinazione]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_destinazione] - $imponibile,2);
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $imponibile, $iva, $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito>10) {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'));
+            $imponibile = round($totali[$this->id_depositario]/(1+ Parametri::getIVA()),2);
+            $iva = round($totali[$this->id_depositario] - $imponibile,2);
+
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $imponibile, $iva, $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
         }
 
@@ -1042,7 +1099,7 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
 
         $data_ordine = date('Y-m-d');
         $con = DBUtils::getConnection();
-        $sql ="UPDATE preventivi SET tipo=".OrdineCliente::TIPO_ORDINE." , data='".$data_ordine."' ,
+        $sql ="UPDATE preventivi SET tipo=".OrdineBusiness::TIPO_ORDINE." , data='".$data_ordine."' ,
          importo_commessa_trasportatore ='".$totali[$this->id_trasportatore]."',
          importo_commessa_traslocatore_partenza ='".$totali[$this->id_traslocatore_partenza]."',
          importo_commessa_traslocatore_destinazione ='".$totali[$this->id_traslocatore_destinazione]."',
@@ -1107,7 +1164,7 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
         $totali[$this->id_traslocatore_destinazione] = $totali[$this->id_traslocatore_destinazione] + $importo_traslocatore_destinazione;
 
 
-        $mc = $preventivatore->getDettaglioMC();
+        $mc = $preventivatore->getMC();
 
         $totaliMC[$this->id_trasportatore] = $totaliMC[$this->id_trasportatore] + $mc['mc_da_trasportare'];
         $totaliMC[$this->id_depositario] = $totaliMC[$this->id_depositario] + $mc['mc_da_trasportare'];
@@ -1115,18 +1172,28 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
         $totaliMC[$this->id_traslocatore_partenza]  = $totaliMC[$this->id_traslocatore_partenza] + $mc['mc_da_rimontare'] + $mc['mc_scarico_salita_piano'];
 
 
-        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $totaliMC[$this->id_trasportatore], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_trasportatore]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_trasportatore] - $imponibile,2);
+
+        $ordine_trasportatore = new OrdineFornitore($this->id_preventivo, $this->id_trasportatore, $totali[$this->id_trasportatore], $imponibile, $iva,  $totaliMC[$this->id_trasportatore], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASPORTO);
         $ordine_trasportatore->save();
 
-        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_traslocatore_partenza]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_partenza] - $imponibile,2);
+        $ordine_traslocatore_partenza = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_partenza, $totali[$this->id_traslocatore_partenza], $imponibile, $iva, $totaliMC[$this->id_traslocatore_destinazione], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_PARTENZA);
         $ordine_traslocatore_partenza->save();
 
-        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'));
+        $imponibile = round($totali[$this->id_traslocatore_destinazione]/(1+ Parametri::getIVA()),2);
+        $iva = round($totali[$this->id_traslocatore_destinazione] - $imponibile,2);
+        $ordine_traslocatore_destinazione = new OrdineFornitore($this->id_preventivo, $this->id_traslocatore_destinazione, $totali[$this->id_traslocatore_destinazione], $imponibile, $iva, $totaliMC[$this->id_traslocatore_partenza], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_TRASLOCO_DESTINAZIONE);
         $ordine_traslocatore_destinazione->save();
 
         if ($this->giorni_deposito> 10)
         {
-            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $totaliMC[$this->id_depositario], date('Y-m-d'));
+            $imponibile = round($totali[$this->id_depositario]/(1+ Parametri::getIVA()),2);
+            $iva = round($totali[$this->id_depositario] - $imponibile,2);
+
+            $ordine_depositario = new OrdineFornitore($this->id_preventivo, $this->id_depositario, $totali[$this->id_depositario], $imponibile, $iva, $totaliMC[$this->id_depositario], date('Y-m-d'), OrdineFornitore::TIPO_SERVIZIO_DEPOSITO);
             $ordine_depositario->save();
 
         }
@@ -1146,5 +1213,40 @@ destinazione_codice_provincia, destinazione_codice_citta, tipologia_cliente, mc,
 
         DBUtils::closeConnection($con);
 
+   }
+
+    public function getIdLocalizzionePartenza() { return $this->partenza_localizzazione; }
+    public function getIdLocalizzioneTipoPartenza() { return $this->partenza_localizzazione_tipo; }
+    public function getIdLocalizzioneTipoPianoPartenza() { return $this->partenza_localizzazione_tipo_piano; }
+
+    public function getIdLocalizzioneDestinazione() { return $this->destinazione_localizzazione; }
+    public function getIdLocalizzioneTipoDestinazione() { return $this->destinazione_localizzazione_tipo; }
+    public function getIdLocalizzioneTipoPianoDestinazione() { return $this->destinazione_localizzazione_tipo_piano; }
+
+    public function setPianiDaSalire($numero_piani)
+    {
+        $this->piani_da_salire = $numero_piani;
     }
+
+    public function getPianiDaSalire()
+    {
+        return $this->piani_da_salire;
+    }
+
+    public function setPeso($peso)
+    {
+        $this->peso = $peso;
+    }
+
+    public function getPeso() { return $this->peso; }
+
+    public function setMontaggio($value) { $this->montaggio = $value; }
+    public function getMontaggio() { return $this->montaggio; }
+
+    public function setMontaggioInLocaliDiPreggio($value) { $this->montaggio_locali_preggio = $value; }
+    public function getMontaggioInLocaliDiPreggio() { return $this->montaggio_locali_preggio; }
+
+    public function setPagamentoContrassegno($value) { $this->pagamento_contrassegno = $value; }
+    public function getPagamentoContrassegno() { return $this->pagamento_contrassegno; }
+
 }

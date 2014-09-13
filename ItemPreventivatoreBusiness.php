@@ -24,6 +24,5 @@ class ItemPreventivatoreBusiness {
         $this->qta = $qta;
         $this->mc = $mc;
 
-
     }
 } 

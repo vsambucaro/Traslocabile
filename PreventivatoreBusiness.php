@@ -35,6 +35,18 @@ class PreventivatoreBusiness {
     private $prezzo_cliente_con_iva = 0;
     private $mc;
 
+    private $piani_da_salire = 0;
+    private $peso = 0;
+    private $montaggio=0;
+    private $montaggio_locali_preggio = 0;
+    private $pagamento_contrassegno = 0;
+
+    protected $importo_commessa_trasportatore;
+    protected $importo_commessa_depositario;
+    protected $importo_commessa_traslocatore_partenza;
+    protected $importo_commessa_traslocatore_destinazione;
+
+
     //reference al preventivo
     private $preventivo = null;
 
@@ -76,8 +88,8 @@ class PreventivatoreBusiness {
         if ($this->tipo_algoritmo == PreventivatoreBusiness::TIPO_ALGORITMO_MOBILIERI)
         {
             $parametri = new ParametriPreventivoBusinessMobilieri();
-            $parametri->partenza = $this->indirizzo_partenza;
-            $parametri->destinazione = $this->indirizzo_destinazione;
+            $parametri->indirizzo_partenza = $this->indirizzo_partenza;
+            $parametri->indirizzo_destinazione = $this->indirizzo_destinazione;
             $parametri->mc_trasportati = $this->getMC();
             $parametri->piani_da_salire = $this->getPianiDaSalire();
             $parametri->peso = $this->getPeso();
@@ -90,7 +102,17 @@ class PreventivatoreBusiness {
             //TODO SERVIZI ACCESSORI DOVE LI METTIAMO ?
             $calcolatore = new CalcolatoreMobilieri();
             $calcolatore->setParametriCalcolo($parametri);
-            //TODO CAPIRE CHE VALORI ESPORTARE
+            $result = $calcolatore->elabora();
+
+            $this->prezzo_cliente_con_iva = round($result['prezzo_cliente_con_iva'], 2);
+            $this->prezzo_cliente_senza_iva = round($result['prezzo_cliente_senza_iva'],2);
+            $this->mc = round($result['mc'],3);
+            $this->importo_commessa_trasportatore = round($result['tariffa_trasportatore'], 2);
+            $this->importo_commessa_traslocatore_partenza = round($result['tariffa_traslocatore_partenza'], 2);
+            $this->importo_commessa_traslocatore_destinazione = round($result['tariffa_traslocatore_destinazione'], 2);
+            $this->importo_commessa_depositario = round($result['tariffa_depositario'], 2);
+
+            return $result;
         }
         return 0;
 
@@ -257,12 +279,20 @@ class PreventivatoreBusiness {
      * Salva il preventivo
      */
     public function save(Customer $customer = null) {
+
+
         $preventivo = new PreventivoBusiness();
-        if (!$this->preventivo)
+
+
+
+        if ($this->preventivo != null)
             $preventivo = $this->preventivo;
+
+
 
         if ($customer)
             $preventivo->setCliente($customer);
+
 
         $preventivo->setPartenza($this->indirizzo_partenza);
         $preventivo->setDestinazione($this->indirizzo_destinazione);
@@ -277,6 +307,15 @@ class PreventivatoreBusiness {
         $preventivo->setFlagSopraluogo($this->flag_sopraluogo);
         $preventivo->setDataSopraluogo($this->data_sopraluogo);
         $preventivo->setMC($this->mc);
+        $preventivo->setPianiDaSalire($this->getPianiDaSalire());
+        $preventivo->setPeso($this->getPeso());
+        $preventivo->setMontaggio($this->getMontaggio());
+        $preventivo->setMontaggioInLocaliDiPreggio($this->getMontaggioInLocaliDiPreggio());
+        $preventivo->setPagamentoContrassegno($this->getPagamentoContrassegno());
+        $preventivo->importo_commessa_depositario = $this->importo_commessa_depositario;
+        $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
+        $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
+        $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
         $preventivo->save();
 
         return $preventivo;
@@ -324,5 +363,29 @@ class PreventivatoreBusiness {
         $this->preventivo = $ref;
     }
 
+    public function setPianiDaSalire($numero_piani)
+    {
+        $this->piani_da_salire = $numero_piani;
+    }
 
+    public function getPianiDaSalire()
+    {
+        return $this->piani_da_salire;
+    }
+
+    public function setPeso($peso)
+    {
+        $this->peso = $peso;
+    }
+
+    public function getPeso() { return $this->peso; }
+
+    public function setMontaggio($value) { $this->montaggio = $value; }
+    public function getMontaggio() { return $this->montaggio; }
+
+    public function setMontaggioInLocaliDiPreggio($value) { $this->montaggio_locali_preggio = $value; }
+    public function getMontaggioInLocaliDiPreggio() { return $this->montaggio_locali_preggio; }
+
+    public function setPagamentoContrassegno($value) { $this->pagamento_contrassegno = $value; }
+    public function getPagamentoContrassegno() { return $this->pagamento_contrassegno; }
 } 
