@@ -18,11 +18,11 @@ class SimulazionePreventivoDettaglio {
     {
         $preventivo = new Preventivo();
         //$preventivo->load(72);
-        if (!$preventivo->loadDettaglio(402)) die ("Preventivo non esiste");
+        if (!$preventivo->loadDettaglio(6)) die ("Preventivo non esiste");
 
 
         $preventivatore = $preventivo->getPreventivatore();
-        $result = $preventivatore->elabora();
+        $result = $preventivatore->elabora(false);
 
 
         echo "\nPrezzo cliente: ".round($result['prezzo_cliente_con_iva'],2);
@@ -56,6 +56,14 @@ class SimulazionePreventivoDettaglio {
 
         echo "\nRESULT:\n";
         print_r($result);
+
+        //Aggiorno tutto e salvo
+        $preventivatore->updatePreventivo($preventivo);
+        $preventivo->save();
+
+        //Rielabora
+        $preventivatore->elabora();
+
 
 
     }

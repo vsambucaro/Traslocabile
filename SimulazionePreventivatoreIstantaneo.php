@@ -100,5 +100,5 @@ class SimulazionePreventivatoreIstantaneo {
 }
 
 $t = new SimulazionePreventivatoreIstantaneo();
-$t->load();
-//$t->run();
+//$t->load();
+$t->run();
