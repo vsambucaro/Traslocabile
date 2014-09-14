@@ -18,8 +18,12 @@ class TestPreventivatoreBusiness {
         $preventivatore->addItem(new ItemPreventivatoreBusiness("prova", 10,null, null, null, 1));
 
 
-        $indirizzoPartenza = new Indirizzo('Via Flavio Gioia 8','Cernusco Sul Naviglio','MI','20063');
-        $indirizzoDestinazione = new Indirizzo('','Roma','','');
+        //$indirizzoPartenza = new Indirizzo('Via Flavio Gioia 8','Cernusco Sul Naviglio','MI','20063');
+        //$indirizzoDestinazione = new Indirizzo('','Roma','','');
+
+        $indirizzoPartenza = new Indirizzo('', '',  '' , '');
+        $indirizzoDestinazione = new Indirizzo('','','','');
+
         $preventivatore->setIndirizzoPartenza($indirizzoPartenza);
         $preventivatore->setIndirizzoDestinazione($indirizzoDestinazione);
         $preventivatore->setPianiDaSalire(3);
@@ -34,7 +38,7 @@ class TestPreventivatoreBusiness {
         $customer = new Customer(1, 'test@gmai.com');
         $preventivo = $preventivatore->save($customer);
 
-
+        var_dump($preventivo);
        // $preventivo->setIdTraslocatorePartenza( 716 );
        // $preventivo->setIdTrasportatore( 711 );
        // $preventivo->setIdTraslocatoreDestinazione(716);
@@ -115,6 +119,6 @@ class TestPreventivatoreBusiness {
 }
 
 $m = new TestPreventivatoreBusiness();
-//$m->run();
-$m->loadPreventivo();
+$m->run();
+//$m->loadPreventivo();
 //$m->testUpdate();

@@ -61,8 +61,6 @@ class SimulazionePreventivoDettaglio {
         $preventivatore->updatePreventivo($preventivo);
         $preventivo->save();
 
-        //Rielabora
-        $preventivatore->elabora();
 
 
 

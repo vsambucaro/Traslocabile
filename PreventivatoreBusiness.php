@@ -317,7 +317,8 @@ class PreventivatoreBusiness {
         $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
         $preventivo->setListaVociExtra($this->lista_voci_extra);
-        $preventivo->save();
+        $preventivo->tipo_algoritmo = $this->tipo_algoritmo;
+        $id = $preventivo->save();
 
         return $preventivo;
     }
@@ -355,6 +356,7 @@ class PreventivatoreBusiness {
         $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
         $preventivo->setListaVociExtra($this->lista_voci_extra);
+        $preventivo->tipo_algoritmo = $this->tipo_algoritmo;
 
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);

@@ -31,7 +31,14 @@ class CalcolatoreDistanza {
             );
         } else {
             //Bad Address
-            throw new Exception('Could not resolve URL');
+            //throw new Exception('Could not resolve URL');
+            return array(
+                // 'distance' => str_replace(' ', '', str_replace('km', '', $jsonToObject->rows[0]->elements[0]->distance->text)),
+                'distance' => '0',
+                'time' => '0',
+            );
+
+
         }
     }
 } 

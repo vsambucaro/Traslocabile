@@ -195,6 +195,9 @@ class PreventivoBusiness {
         if ($this->tipo == Ordine::TIPO_ORDINE)
             $this->updateCommesse();
 
+        $this->id_preventivo = $id_preventivo;
+
+
     }
 
     /**
@@ -280,7 +283,7 @@ importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_cit
 destinazione_codice_provincia, destinazione_codice_citta, note_interne,
 partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
 destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc, tipologia_cliente,
-piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algorimo)
+piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
