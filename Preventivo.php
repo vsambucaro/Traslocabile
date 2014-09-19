@@ -381,11 +381,12 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             $servizio_montaggio = $arredo->getServizioMontaggio();
             $servizio_smontaggio = $arredo->getServizioSmontaggio();
             $imballaggio = $arredo->getServizioImballaggio();
+            $descrizione = $arredo->getCampo(Arredo::DESCRIZIONE);
 
             $sql ="INSERT INTO arredi_preventivo (id_arredo, id_preventivo, qta, dim_A, dim_P, dim_L,
-            servizio_montaggio, servizio_smontaggio, servizio_imballaggio)
+            servizio_montaggio, servizio_smontaggio, servizio_imballaggio, descrizione)
              VALUES ('$id_arredo', '$id_preventivo', '$qta', '$dim_A','$dim_P','$dim_L',
-             '$servizio_montaggio','$servizio_smontaggio','$imballaggio')";
+             '$servizio_montaggio','$servizio_smontaggio','$imballaggio','$descrizione')";
 
             $res = mysql_query($sql);
             //echo "\n SQL:".$sql;
@@ -620,6 +621,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             $arredo->setServizioMontaggio($row->servizio_montaggio);
             $arredo->setServizioSmontaggio($row->servizio_smontaggio);
 
+
             $this->lista_arredi[] = $arredo;
             $found = true;
         }
@@ -656,6 +658,7 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             $arredo->setServizioImballaggio($row->servizio_imballaggio);
             $arredo->setServizioMontaggio($row->servizio_montaggio);
             $arredo->setServizioSmontaggio($row->servizio_smontaggio);
+            $arredo->setCampo(Arredo::DESCRIZIONE, $row->descrizione);
 
 
             $this->lista_arredi[] = $arredo;

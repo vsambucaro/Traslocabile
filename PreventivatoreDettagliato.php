@@ -39,7 +39,7 @@ class PreventivatoreDettagliato extends Preventivatore
      * @return int
      */
     public function addArredoById($id_arredo, $parte_variabile=null, $qta=1, $parametro_B = null, $dim_A = null, $dim_P = null, $dim_L = null,
-$flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imballaggio = 0)
+        $descrizione = null, $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imballaggio = 0)
      {
          //crea l'oggetto Arredo
          $arredo = new ArredoDettagliato($id_arredo);
@@ -69,6 +69,7 @@ $flag_servizio_montaggio = 0, $flag_servizio_smontaggio = 0, $flag_servizio_imba
          $arredo->setServizioImballaggio($flag_servizio_imballaggio);
          $arredo->setServizioSmontaggio($flag_servizio_smontaggio);
          $arredo->setServizioMontaggio($flag_servizio_montaggio);
+         $arredo->setCampo(Arredo::DESCRIZIONE, $descrizione);
 
          $this->lista_arredi[] = $arredo;
 

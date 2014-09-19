@@ -11,8 +11,9 @@ class ArredoDettagliato extends Arredo
 {
 
 
-    public function __construct( $id_arredo)
+    public function __construct( $id_arredo = null)
     {
+        if (!$id_arredo) return;
         $con = DBUtils::getConnection();
         $sql = "SELECT * FROM arredi WHERE id='$id_arredo'";
         $res = mysql_query($sql);
@@ -33,6 +34,7 @@ class ArredoDettagliato extends Arredo
             $this->record[$this::MONTATO_VUOTO] = $row->montato_vuoto;
             $this->record[$this::SMONTATO_PIENO] = $row->smontato_pieno;
             $this->record[$this::SMONTATO_VUOTO] = $row->smontato_vuoto;
+            $this->record[$this::DESCRIZIONE] = $row->descrizione;
             $found = true;
         }
         DBUtils::closeConnection($con);
@@ -52,6 +54,7 @@ class ArredoDettagliato extends Arredo
             'DIM_A:'.$this->record[$this::DIM_A].', '.
             'DIM_L:'.$this->record[$this::DIM_L].', '.
             'DIM_P:'.$this->record[$this::DIM_P].', '.
+            'DESCRIZIONE:'.$this->record[$this::DESCRIZIONE].', '.
             'SMONTABILE:'.$this->record[$this::SMONTABILE].', '.
             'CONTENITORE:'.$this->record[$this::CONTENITORE].', '.
             'IMBALLABILE:'.$this->record[$this::IMBALLABILE].', '.

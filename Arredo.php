@@ -18,6 +18,7 @@ abstract class Arredo {
     const SMONTABILE='SMONTABILE';
     const CONTENITORE='CONTENITORE';
     const IMBALLABILE='IMBALLABILE';
+    const DESCRIZIONE='DESCRIZIONE';
 
     //PARAMETRO_B
     const MONTATO_PIENO='MONTATO_PIENO';
@@ -84,7 +85,8 @@ abstract class Arredo {
             'DIMENSIONI_DA_RICHIEDERE:'.$this->record[$this::DIMENSIONI_DA_RICHIEDERE].', '.
             'DIM_A:'.$this->record[$this::DIM_A].', '.
             'DIM_L:'.$this->record[$this::DIM_L].', '.
-            'DIM_P:'.$this->record[$this::DIM_P].', ';
+            'DIM_P:'.$this->record[$this::DIM_P].', '.
+            'DESCRIZIONE:'.$this->record[$this::DESCRIZIONE];
 
         return $str;
     }
