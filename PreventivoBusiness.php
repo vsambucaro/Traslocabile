@@ -223,8 +223,12 @@ class PreventivoBusiness {
 
         $this->id_preventivo = $id_preventivo;
 
-        $this->destinatario_preventivo_business->id_preventivo = $id_preventivo;
-        $this->destinatario_preventivo_business->save();
+        if ($this->destinatario_preventivo_business != null)
+        {
+            $this->destinatario_preventivo_business->id_preventivo = $id_preventivo;
+            $this->destinatario_preventivo_business->save();
+
+        }
 
 
     }
@@ -415,7 +419,7 @@ note_partenza, note_destinazione)
             $descrizione = $item->descrizione;
             $qta = $item->qta;
             $dim_A = $item->altezza;
-            $dim_L = $item->lunghezza;
+            $dim_L = $item->larghezza;
             $dim_P = $item->profondita;
             $mc = $item->mc;
             $sql ="INSERT INTO items_preventivo (descrizione, id_preventivo, qta, dim_A, dim_P, dim_L , mc)

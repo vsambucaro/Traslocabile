@@ -8,7 +8,7 @@
 
 class DBUtils {
     //private static $dbhost = "127.0.0.1:8889";
-    private static $dbhost = "64.64.7.217";
+    private static $dbhost = "ne662.neencloud.it";
     //private static $dbname = "traslocabile";
     //private static $dbusername="root";
     //private static $dbpassword = "root";

@@ -11,8 +11,9 @@ class TestPreventivatoreBusiness {
 
     public function run()
     {
-        $preventivatore = new PreventivatoreBusiness();
-        $preventivatore->setAlgoritmo(PreventivatoreBusiness::TIPO_ALGORITMO_MOBILIERI);
+        $preventivatore = new PreventivatoreBusiness(null, 'CUCINIERI');
+
+        $preventivatore->setAlgoritmo(PreventivatoreBusiness::TIPO_ALGORITMO_STANDARD);
 
         $preventivatore->addItem(new ItemPreventivatoreBusiness("test", null, 1,2,3,1));
         $preventivatore->addItem(new ItemPreventivatoreBusiness("prova", 10,null, null, null, 1));
@@ -35,8 +36,17 @@ class TestPreventivatoreBusiness {
         print_r($res);
 
 
-        $customer = new Customer(1, 'test@gmai.com');
+        $customer = new Customer(1, 'test@gmail.com');
         $preventivo = $preventivatore->save($customer);
+        $destinatario = new DestinatarioPreventivoBusiness();
+        $destinatario->ragione_sociale="Pippo Rossi";
+        $destinatario->cap= "20063";
+        $destinatario->città = "Milano";
+        $destinatario->provincia ="MI";
+        $destinatario->indirizzo="VIA POPPA 1";
+        $preventivo->setDestinatarioPreventivoBusiness($destinatario);
+
+        $preventivo->save();
 
         var_dump($preventivo);
        // $preventivo->setIdTraslocatorePartenza( 716 );

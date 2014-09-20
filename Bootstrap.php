@@ -38,8 +38,7 @@ require_once 'Ordini.php';
 require_once 'Ordine.php';
 require_once 'FattureClienti.php';
 require_once 'ERP.php';
-require_once 'TariffeCucinieri.php';
-require_once 'TariffeSnaidero.php';
+require_once 'TariffeBusiness.php';
 require_once 'PreventivatoreBusiness.php';
 require_once 'ItemPreventivatoreBusiness.php';
 require_once 'PreventivoBusiness.php';
@@ -51,7 +50,8 @@ require_once 'CalcolatoreIstantaneo.php';
 require_once 'Fornitore.php';
 require_once 'FattureFornitori.php';
 require_once 'CalcolatoreDettaglio.php';
-require_once 'CalcolatoreMobilieri.php';
+require_once 'CalcolatoreBusiness.php';
 require_once 'ParametriPreventivoBusiness.php';
-require_once 'ParametriPreventivoBusinessMobilieri.php';
+require_once 'DestinatarioPreventivoBusiness.php';
+
 

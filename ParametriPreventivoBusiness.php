@@ -28,5 +28,18 @@ class ParametriPreventivoBusiness {
     public $indirizzo_partenza;
     public $indirizzo_destinazione;
 
+    const trazione_fino_sede_loggistica="trazione_fino_sede_loggistica";
+    const tariffa_scarico_ricarico_fino_sede_loggistica = "tariffa_scarico_ricarico_fino_sede_loggistica";
+    const giacenza = "giacenza";
+    const trazione_sede_logistica_cliente_finale_entro_30km = "trazione_sede_logistica_cliente_finale_entro_30km";
+    const trazione_sede_logistica_cliente_finale_entro_da_30km_a_200km = "trazione_sede_logistica_cliente_finale_entro_da_30km_a_200km";
+    const tariffa_scarico_sede_cliente = "tariffa_scarico_sede_cliente";
+    const tariffa_salita_al_piano = "tariffa_salita_al_piano";
+    const tariffa_montaggio_sede_cliente = "tariffa_montaggio_sede_cliente";
+    const pagamento_assegni = "pagamento_assegni";
+    const trazione_mobiliere_sede_cliente = "trazione_mobiliere_sede_cliente";
+    public $mc_mese;
+
+    public $parametri = array();
 
 } 

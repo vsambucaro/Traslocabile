@@ -9,8 +9,7 @@
 
 class PreventivatoreBusiness {
 
-    const TIPO_ALGORITMO_MOBILIERI = 0;
-    const TIPO_ALGORITMO_CUCINIERI = 1;
+    const TIPO_ALGORITMO_STANDARD = 0;
     const TIPO_ALGORITMO_NON_STANDARD = 2;
     private $lista_item = array();
     private $sconto = 0;
@@ -58,9 +57,16 @@ class PreventivatoreBusiness {
     private $preventivo = null;
     private $destinatario_preventivo_business = null;
 
+    private $id_cliente = null;
+    private $tipologia_cliente = null;
 
 
     //inizio metodi
+    public function __construct($id_cliente, $tipologia_cliente)
+    {
+        $this->id_cliente = $id_cliente;
+        $this->tipologia_cliente = $tipologia_cliente;
+    }
 
     public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
     {
@@ -119,9 +125,9 @@ class PreventivatoreBusiness {
 
     public function elabora()
     {
-        if ($this->tipo_algoritmo == PreventivatoreBusiness::TIPO_ALGORITMO_MOBILIERI)
+        if ($this->tipo_algoritmo == PreventivatoreBusiness::TIPO_ALGORITMO_STANDARD)
         {
-            $parametri = new ParametriPreventivoBusinessMobilieri();
+            $parametri = new ParametriPreventivoBusiness();
             $parametri->indirizzo_partenza = $this->indirizzo_partenza;
             $parametri->indirizzo_destinazione = $this->indirizzo_destinazione;
             $parametri->mc_trasportati = $this->getMC();
@@ -133,8 +139,10 @@ class PreventivatoreBusiness {
             $parametri->pagamento_contrassegno = $this->getPagamentoContrassegno();
             $parametri->margine_traslocabile = Parametri::getMargine();
             $parametri->lista_voci_extra = $this->getListaVociExtra();
+            $parametri->mc_mese = 0; //TODO DA DETERMINARE
+
             //TODO SERVIZI ACCESSORI DOVE LI METTIAMO ?
-            $calcolatore = new CalcolatoreMobilieri();
+            $calcolatore = new CalcolatoreBusiness($this->id_cliente, $this->tipologia_cliente);
             $calcolatore->setParametriCalcolo($parametri);
             $result = $calcolatore->elabora();
 
@@ -356,9 +364,12 @@ class PreventivatoreBusiness {
         $preventivo->setLocalizzazioneDestinazione($this->destinazione_localizzazione, $this->destinazione_localizzazione_tipo, $this->destinazione_localizzazione_tipo_piano);
 
         $id = $preventivo->save();
+        if ($this->destinatario_preventivo_business != null)
+        {
+            $this->destinatario_preventivo_business->id_preventivo = $id;
+            $this->destinatario_preventivo_business->save();
 
-        $this->destinatario_preventivo_business->id_preventivo = $id;
-        $this->destinatario_preventivo_business->save();
+        }
 
         return $preventivo;
     }
