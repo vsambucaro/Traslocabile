@@ -71,11 +71,37 @@ class PreventivoBusiness {
 
     public  $tipo_algoritmo = null;
 
+    private $destinatario_preventivo_business = null;
+    public $note_partenza;
+    public $note_destinazione;
 
+    //inizio metodi
     public function __construct()
     {
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
 
+    }
+
+    public function setDestinatarioPreventivoBusiness(DestinatarioPreventivoBusiness $destinatario)
+    {
+        $this->destinatario_preventivo_business = $destinatario;
+    }
+
+    public function getDestinatarioPreventivoBusiness() { return $this->destinatario_preventivo_business;}
+
+    public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->partenza_localizzazione = $id_localizzazione;
+        $this->partenza_localizzazione_tipo = $id_tipo;
+        $this->partenza_localizzazione_tipo_piano = $id_piano;
+    }
+
+
+    public function setLocalizzazioneDestinazione($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->destinazione_localizzazione = $id_localizzazione;
+        $this->destinazione_localizzazione_tipo = $id_tipo;
+        $this->destinazione_localizzazione_tipo_piano = $id_piano;
     }
 
     //set id cliente del preventivo
@@ -197,6 +223,9 @@ class PreventivoBusiness {
 
         $this->id_preventivo = $id_preventivo;
 
+        $this->destinatario_preventivo_business->id_preventivo = $id_preventivo;
+        $this->destinatario_preventivo_business->save();
+
 
     }
 
@@ -283,7 +312,8 @@ importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_cit
 destinazione_codice_provincia, destinazione_codice_citta, note_interne,
 partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
 destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc, tipologia_cliente,
-piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
+piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo,
+note_partenza, note_destinazione)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -300,7 +330,7 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
          '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano',
          '$this->mc',1,
          '$piano', '$montaggio', '$montaggio_locali_preggio', '$pagamento_contrassegno',
-         '$algoritmo'
+         '$algoritmo', '$this->note_partenza', '$this->note_destinazione'
         )";
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
@@ -353,7 +383,10 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
           montaggio = $montaggio,
           montaggio_locali_preggio = $montaggio_locali_preggio,
           pagamento_contrassegno = $pagamento_contrassegno,
-          algoritmo = $algoritmo
+          algoritmo = $algoritmo,
+          note_partenza = '$this->note_partenza',
+          note_destinazione = '$this->note_destinazione'
+
 
           WHERE id_preventivo='$id_preventivo'
         ";
@@ -504,6 +537,8 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
         $this->_loadDeposito($id_preventivo);
         $this->_loadVociPreventivoExtra($id_preventivo);
 
+        $this->destinatario_preventivo_business = new DestinatarioPreventivoBusiness();
+        $this->destinatario_preventivo_business->load($id_preventivo);
         //echo "\nCaricamento Preventivo OK";
         return $found;
 
@@ -549,6 +584,17 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
             $this->montaggio = $row->montaggio;
             $this->pagamento_contrassegno = $row->pagamento_contrassegno;
             $this->tipo_algoritmo = $row->algoritmo;
+
+            $this->partenza_localizzazione = $row->partenza_localizzazione;
+            $this->partenza_localizzazione_tipo = $row->partenza_localizzazione_tipo;
+            $this->partenza_localizzazione_tipo_piano = $row->partenza_localizzazione_tipo_piano;
+
+            $this->destinazione_localizzazione = $row->destinazione_localizzazione;
+            $this->destinazione_localizzazione_tipo = $row->destinazione_localizzazione_tipo;
+            $this->destinazione_localizzazione_tipo_piano = $row->destinazione_localizzazione_tipo_piano;
+
+            $this->note_destinazione = $row->note_destinazione;
+            $this->note_partenza = $row->note_partenza;
 
             $found = true;
         }
@@ -954,6 +1000,15 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
         $preventivatore->setPagamentoContrassegno($this->pagamento_contrassegno);
         $preventivatore->setAlgoritmo($this->tipo_algoritmo);
         $preventivatore->setReferencePreventivo($this);
+        $preventivatore->setDestinatarioPreventivoBusiness($this->destinatario_preventivo_business);
+        $preventivatore->partenza_localizzazione = $this->partenza_localizzazione;
+        $preventivatore->partenza_localizzazione_tipo = $this->partenza_localizzazione_tipo;
+        $preventivatore->partenza_localizzazione_tipo_piano = $this->partenza_localizzazione_tipo_piano;
+
+        $preventivatore->destinazione_localizzazione = $this->destinazione_localizzazione;
+        $preventivatore->destinazione_localizzazione_tipo = $this->destinazione_localizzazione_tipo;
+        $preventivatore->destinazione_localizzazione_tipo_piano = $this->destinazione_localizzazione_tipo_piano;
+
 
         //$preventivatore->setCliente($this->customer); TODO
 
@@ -1263,5 +1318,6 @@ piano, montaggio, montaggio_locali_preggio, pagamento_contrassegno, algoritmo)
 
     public function setPagamentoContrassegno($value) { $this->pagamento_contrassegno = $value; }
     public function getPagamentoContrassegno() { return $this->pagamento_contrassegno; }
+
 
 }

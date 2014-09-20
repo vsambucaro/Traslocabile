@@ -46,9 +46,43 @@ class PreventivatoreBusiness {
     protected $importo_commessa_traslocatore_partenza;
     protected $importo_commessa_traslocatore_destinazione;
 
+    public $partenza_localizzazione;
+    public $partenza_localizzazione_tipo;
+    public $partenza_localizzazione_tipo_piano;
+
+    public $destinazione_localizzazione;
+    public $destinazione_localizzazione_tipo;
+    public $destinazione_localizzazione_tipo_piano;
 
     //reference al preventivo
     private $preventivo = null;
+    private $destinatario_preventivo_business = null;
+
+
+
+    //inizio metodi
+
+    public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->partenza_localizzazione = $id_localizzazione;
+        $this->partenza_localizzazione_tipo = $id_tipo;
+        $this->partenza_localizzazione_tipo_piano = $id_piano;
+    }
+
+
+    public function setLocalizzazioneDestinazione($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->destinazione_localizzazione = $id_localizzazione;
+        $this->destinazione_localizzazione_tipo = $id_tipo;
+        $this->destinazione_localizzazione_tipo_piano = $id_piano;
+    }
+
+    public function setDestinatarioPreventivoBusiness(DestinatarioPreventivoBusiness $destinatario)
+    {
+        $this->destinatario_preventivo_business = $destinatario;
+    }
+
+    public function getDestinatarioPreventivoBusiness() { return $this->destinatario_preventivo_business;}
 
     public function setIndirizzoPartenza(Indirizzo $indirizzo)
     {
@@ -64,12 +98,12 @@ class PreventivatoreBusiness {
 
     public function addItem(ItemPreventivatoreBusiness $item)
     {
-        if ($item->mc == 0) {
-            $item->mc = $item->altezza * $item->lunghezza * $item->profondita;
+        if ($item->mc == 0 || $item->mc == null) {
+            $item->mc = $item->altezza * $item->larghezza * $item->profondita;
         }
 
         $this->lista_item[] = $item;
-        return $item->mc;
+        return ($item->mc * $item->qta);
     }
 
     public function removeItemAtRow($position)
@@ -318,7 +352,13 @@ class PreventivatoreBusiness {
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
         $preventivo->setListaVociExtra($this->lista_voci_extra);
         $preventivo->tipo_algoritmo = $this->tipo_algoritmo;
+        $preventivo->setLocalizzazionePartenza($this->partenza_localizzazione, $this->partenza_localizzazione_tipo, $this->partenza_localizzazione_tipo_piano);
+        $preventivo->setLocalizzazioneDestinazione($this->destinazione_localizzazione, $this->destinazione_localizzazione_tipo, $this->destinazione_localizzazione_tipo_piano);
+
         $id = $preventivo->save();
+
+        $this->destinatario_preventivo_business->id_preventivo = $id;
+        $this->destinatario_preventivo_business->save();
 
         return $preventivo;
     }
@@ -357,6 +397,11 @@ class PreventivatoreBusiness {
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
         $preventivo->setListaVociExtra($this->lista_voci_extra);
         $preventivo->tipo_algoritmo = $this->tipo_algoritmo;
+        $preventivo->setLocalizzazionePartenza($this->partenza_localizzazione, $this->partenza_localizzazione_tipo, $this->partenza_localizzazione_tipo_piano);
+        $preventivo->setLocalizzazioneDestinazione($this->destinazione_localizzazione, $this->destinazione_localizzazione_tipo, $this->destinazione_localizzazione_tipo_piano);
+
+        $this->destinatario_preventivo_business->id_preventivo = $preventivo->getId();
+        $this->destinatario_preventivo_business->save();
 
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);

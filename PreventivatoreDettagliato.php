@@ -27,6 +27,30 @@ class PreventivatoreDettagliato extends Preventivatore
     public $importo_commessa_traslocatore_partenza;
     public $importo_commessa_traslocatore_destinazione;
 
+    public $partenza_localizzazione;
+    public $partenza_localizzazione_tipo;
+    public $partenza_localizzazione_tipo_piano;
+
+    public $destinazione_localizzazione;
+    public $destinazione_localizzazione_tipo;
+    public $destinazione_localizzazione_tipo_piano;
+
+
+
+    public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->partenza_localizzazione = $id_localizzazione;
+        $this->partenza_localizzazione_tipo = $id_tipo;
+        $this->partenza_localizzazione_tipo_piano = $id_piano;
+    }
+
+
+    public function setLocalizzazioneDestinazione($id_localizzazione, $id_tipo, $id_piano)
+    {
+        $this->destinazione_localizzazione = $id_localizzazione;
+        $this->destinazione_localizzazione_tipo = $id_tipo;
+        $this->destinazione_localizzazione_tipo_piano = $id_piano;
+    }
 
     /**
      * @param $id_arredo
@@ -253,7 +277,8 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
         $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
-
+        $preventivo->setLocalizzazionePartenza($this->partenza_localizzazione, $this->partenza_localizzazione_tipo, $this->partenza_localizzazione_tipo_piano);
+        $preventivo->setLocalizzazioneDestinazione($this->destinazione_localizzazione, $this->destinazione_localizzazione_tipo, $this->destinazione_localizzazione_tipo_piano);
         $preventivo->save();
 
         return $preventivo;
@@ -285,6 +310,9 @@ class PreventivatoreDettagliato extends Preventivatore
         $preventivo->importo_commessa_trasportatore = $this->importo_commessa_trasportatore;
         $preventivo->importo_commessa_traslocatore_partenza = $this->importo_commessa_traslocatore_partenza;
         $preventivo->importo_commessa_traslocatore_destinazione = $this->importo_commessa_traslocatore_destinazione;
+        $preventivo->setLocalizzazionePartenza($this->partenza_localizzazione, $this->partenza_localizzazione_tipo, $this->partenza_localizzazione_tipo_piano);
+        $preventivo->setLocalizzazioneDestinazione($this->destinazione_localizzazione, $this->destinazione_localizzazione_tipo, $this->destinazione_localizzazione_tipo_piano);
+
 
         //$preventivo->setImporto($this->prezzo_cliente_con_iva);
         //$preventivo->setStato($this->stato);

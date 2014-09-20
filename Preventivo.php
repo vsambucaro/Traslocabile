@@ -64,6 +64,9 @@ class Preventivo {
     protected $destinazione_localizzazione_tipo_piano;
     protected $mc;
 
+    public $note_partenza;
+    public $note_destinazione;
+
     public function __construct()
     {
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
@@ -286,7 +289,8 @@ data_sopraluogo, data_trasloco, id_agenzia, flag_sopraluogo, note, id_depositari
 importo_commessa_traslocatore_destinazione, imponibile, iva, partenza_codice_citta, partenza_codice_provincia,
 destinazione_codice_provincia, destinazione_codice_citta, note_interne,
 partenza_localizzazione, partenza_localizzazione_tipo, partenza_localizzazione_tipo_piano,
-destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc)
+destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_localizzazione_tipo_piano, mc,
+note_partenza, note_destinazione)
         VALUES ('$data', '$id_cliente', '$cap_partenza',
         '$citta_partenza', '$provincia_partenza', '$indirizzo_partenza',
          '$cap_destinazione',
@@ -301,8 +305,9 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
          '$destinazione_codice_provincia', '$destinazione_codice_citta', '$note_interne',
          '$this->partenza_localizzazione', '$this->partenza_localizzazione_tipo', '$this->partenza_localizzazione_tipo_piano',
          '$this->destinazione_localizzazione', '$this->destinazione_localizzazione_tipo', '$this->destinazione_localizzazione_tipo_piano',
-         '$this->mc'
+         '$this->mc', '$this->note_partenza', '$this->note_destinazione'
         )";
+
 
         //se il preventivo già c'è significa che lo sto salvando e quindi riuso lo stesso id
         if ($id_preventivo)
@@ -348,7 +353,9 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
           destinazione_localizzazione = '$this->destinazione_localizzazione',
           destinazione_localizzazione_tipo = '$this->destinazione_localizzazione_tipo',
           destinazione_localizzazione_tipo_piano = '$this->destinazione_localizzazione_tipo_piano',
-          mc = '$this->mc'
+          mc = '$this->mc',
+          note_partenza = '$this->note_partenza',
+          note_destinazione = '$this->note_destinazione'
 
           WHERE id_preventivo='$id_preventivo'
         ";
@@ -574,6 +581,8 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
             $this->destinazione_localizzazione = $row->destinazione_localizzazione;
             $this->destinazione_localizzazione_tipo = $row->destinazione_localizzazione_tipo;
             $this->destinazione_localizzazione_tipo_piano = $row->destinazione_localizzazione_tipo_piano;
+            $this->note_destinazione = $row->note_destinazione;
+            $this->note_partenza = $row->note_partenza;
 
             $found = true;
         }
@@ -1059,6 +1068,15 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
         $preventivatore->setFlagSopraluogo($this->flag_sopraluogo);
 
         $preventivatore->setReferencePreventivo($this);
+
+        $preventivatore->partenza_localizzazione = $this->partenza_localizzazione;
+        $preventivatore->partenza_localizzazione_tipo = $this->partenza_localizzazione_tipo;
+        $preventivatore->partenza_localizzazione_tipo_piano = $this->partenza_localizzazione_tipo_piano;
+
+        $preventivatore->destinazione_localizzazione = $this->destinazione_localizzazione;
+        $preventivatore->destinazione_localizzazione_tipo = $this->destinazione_localizzazione_tipo;
+        $preventivatore->destinazione_localizzazione_tipo_piano = $this->destinazione_localizzazione_tipo_piano;
+
         //$preventivatore->setCliente($this->customer); TODO
 
 
@@ -1342,5 +1360,79 @@ destinazione_localizzazione, destinazione_localizzazione_tipo, destinazione_loca
     public function getIdLocalizzioneTipoPianoDestinazione() { return $this->destinazione_localizzazione_tipo_piano; }
     public function setMC($mc) { $this->mc = $mc; }
     public function getMC() { return $this->mc; }
+
+    public static function delete($id_preventivo)
+    {
+        $con = DBUtils::getConnection();
+        $sql ="DELETE FROM preventivi WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM arredi_preventivo WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM deposito WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM fatture_da_emettere WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM history_depositario WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM history_traslocatori_destinazione WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM history_traslocatori_partenza WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM history_trasportatori WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM pagamenti_clienti WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM parametri_arredi_preventivo WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM servizi_accessori_aggravanti_preventivo WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM servizi_istantaneo_preventivo WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE FROM voci_preventivo_extra WHERE id_preventivo=$id_preventivo";
+        mysql_query($sql);
+
+        $sql ="DELETE fatture_attive.* , ordini_fatture_attive.*
+        FROM fatture_attive
+        INNER JOIN ordini_fatture_attive
+        ON fatture_attive.numero_fattura = ordini_fatture_attive.numero_fattura
+        AND fatture_attive.anno = ordini_fatture_attive.anno
+        WHERE ordine_fatture_attive.id_ordine=$id_preventivo";
+        mysql_query($sql);
+
+
+        $sql ="DELETE FROM ordini_fatture_attive WHERE id_ordine=$id_preventivo";
+        mysql_query($sql);
+
+
+
+        $sql ="DELETE fatture_passive.* , ordini_fatture_passive.*
+        FROM fatture_passive
+        INNER JOIN ordini_fatture_passive
+        ON fatture_passive.numero_fattura = ordini_fatture_passive.numero_fattura
+        AND fatture_passive.anno = ordini_fatture_passive.anno
+        INNER JOIN ordini_fornitori
+        ON ordini_fatture_passive.id_ordine_fornitore = ordini_fornitori.id_ordine_fornitore
+        WHERE ordini_fornitori.id_ordine_cliente=$id_preventivo";
+        mysql_query($sql);
+
+
+        $sql ="DELETE FROM ordini_fornitori WHERE id_ordine_cliente=$id_preventivo";
+        mysql_query($sql);
+
+        DBUtils::closeConnection($con);
+
+    }
 
 }
