@@ -47,7 +47,7 @@ class OrdineBusiness extends PreventivoBusiness {
     {
         $con = DBUtils::getConnection();
 
-        $sql = "SELECT * FROM pagamenti_clienti WHERE id_ordine=".$this->id_preventivo;
+        $sql = "SELECT * FROM pagamenti_clienti_business WHERE id_ordine=".$this->id_preventivo;
         $res = mysql_query($sql);
         $lista = array();
         while ($row = mysql_fetch_object($res))

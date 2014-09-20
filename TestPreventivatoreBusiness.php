@@ -38,6 +38,8 @@ class TestPreventivatoreBusiness {
 
         $customer = new Customer(1, 'test@gmail.com');
         $preventivo = $preventivatore->save($customer);
+
+        //Destinatario
         $destinatario = new DestinatarioPreventivoBusiness();
         $destinatario->ragione_sociale="Pippo Rossi";
         $destinatario->cap= "20063";
@@ -45,6 +47,8 @@ class TestPreventivatoreBusiness {
         $destinatario->provincia ="MI";
         $destinatario->indirizzo="VIA POPPA 1";
         $preventivo->setDestinatarioPreventivoBusiness($destinatario);
+        $preventivo->note_partenza = "NOTA 1";
+        $preventivo->note_destinazione = "NOTA 2";
 
         $preventivo->save();
 

@@ -172,4 +172,27 @@ class Ordine extends Preventivo {
             return null;
     }
 
+
+    public function getListaOrdiniFornitori()
+    {
+        $tmp = array();
+        $con = DBUtils::getConnection();
+        $sql ="SELECT id_fornitore, id_ordine_fornitore FROM ordini_fornitori WHERE id_ordine_cliente=".$this->id_ordine;
+        $res = mysql_query($sql);
+        while ($row = mysql_fetch_object($res))
+        {
+            $tmp[] = array('id_fornitore'=>$row->id_fornitore, 'id_ordine_fornitore'=>$row->id_ordine_fornitore);
+        }
+
+        DBUtils::closeConnection($con);
+
+        $lista_ordini_fornitori = array();
+        foreach ($tmp as $row)
+        {
+            $lista_ordini_fornitori[] = OrdineFornitore::load($row['id_ordine_fornitore'], $row['id_fornitore']);
+        }
+
+        return $lista_ordini_fornitori;
+    }
+
 } 
