@@ -66,6 +66,7 @@ class Preventivo {
 
     public $note_partenza;
     public $note_destinazione;
+    public $KM;
 
     public function __construct()
     {

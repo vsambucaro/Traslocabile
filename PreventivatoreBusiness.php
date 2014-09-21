@@ -153,6 +153,7 @@ class PreventivatoreBusiness {
             $this->importo_commessa_traslocatore_partenza = round($result['tariffa_traslocatore_partenza'], 2);
             $this->importo_commessa_traslocatore_destinazione = round($result['tariffa_traslocatore_destinazione'], 2);
             $this->importo_commessa_depositario = round($result['tariffa_depositario'], 2);
+            $this->setKM(round($result['KM'],2));
 
             return $result;
         }

@@ -17,9 +17,12 @@ class SimulazionePreventivoDettaglio {
     public function run()
     {
         $preventivo = new Preventivo();
-        //$preventivo->load(72);
-        if (!$preventivo->loadDettaglio(6)) die ("Preventivo non esiste");
 
+        //$preventivo->load(72);
+        if (!$preventivo->loadDettaglio(965)) die ("Preventivo non esiste");
+
+        $preventivo->setLocalizzazionePartenza(1,1,1);
+        $preventivo->setLocalizzazioneDestinazione(2,2,2);
 
         $preventivatore = $preventivo->getPreventivatore();
         $result = $preventivatore->elabora(false);
@@ -59,12 +62,17 @@ class SimulazionePreventivoDettaglio {
 
         //Aggiorno tutto e salvo
         $preventivatore->updatePreventivo($preventivo);
+        $preventivo->note_partenza = "NOTA PARTENZA TEST";
+        $preventivo->note_destinazione = "NOTA DESTINAZIONE TEST";
         $preventivo->save();
+        $km = $preventivatore->getKM();
+        echo "\nKM: $km";
 
 
 
 
     }
+
 
 }
 

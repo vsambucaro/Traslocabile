@@ -172,7 +172,8 @@ class CalcolatoreBusiness {
                 'tariffa_trasportatore' =>$tariffa_trasportatore,
                 'tariffa_traslocatore_partenza' => $tariffa_traslocatore_partenza,
                 'tariffa_traslocatore_destinazione' => $tariffa_traslocatore_destinazione,
-                'tariffa_depositario' => $tariffa_deposito
+                'tariffa_depositario' => $tariffa_deposito,
+                'KM'=>$km
 
             );
 
