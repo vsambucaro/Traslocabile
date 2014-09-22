@@ -14,6 +14,21 @@ require_once 'Preventivo.php';
 
 class SimulazionePreventivoDettaglio {
 
+    public function testAnna()
+    {
+        $preventivo = new Preventivo();
+
+        //$preventivo->load(72);
+        if (!$preventivo->loadDettaglio(965)) die ("Preventivo non esiste");
+
+
+        $preventivatore = $preventivo->getPreventivatore();
+        //$preventivatore->setKM(55);
+        $result = $preventivatore->elabora(false);
+        print_r($result);
+
+    }
+
     public function run()
     {
         $preventivo = new Preventivo();
@@ -77,4 +92,4 @@ class SimulazionePreventivoDettaglio {
 }
 
 $t = new SimulazionePreventivoDettaglio();
-$t->run();
+$t->testAnna();

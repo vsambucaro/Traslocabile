@@ -17,25 +17,43 @@ class CalcolatoreDettaglio {
     public $giorni_deposito = 0;
     public $lista_voci_extra = null;
 
-    private function _getMCSmontaggio()
+    private function _getMCStandard()
     {
         $mc = 0;
         foreach ($this->lista_arredi as $arredo)
         {
             $tmp = $arredo->getMC();
-            if ($arredo->getParametroB() == Arredo::SMONTATO_PIENO)
-            {
-                $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_PIENO);
 
-
-            }
-            if ($arredo->getParametroB() == Arredo::SMONTATO_VUOTO)
-            {
-                $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_VUOTO);
-
-
-            }
+            //TODO per gestione FLAG MONTAGGIO, SMONTAGGIO, IMBALLAGGIO
             $mc+= $tmp;
+
+        }
+
+        return $mc;
+    }
+
+    private function _getMCSmontaggio()
+    {
+        $mc = 0;
+        foreach ($this->lista_arredi as $arredo)
+        {
+            if ($arredo->getServizioSmontaggio())
+            {
+                $tmp = $arredo->getMC();
+                if ($arredo->getParametroB() == Arredo::SMONTATO_PIENO)
+                {
+                    $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_PIENO);
+
+
+                }
+                if ($arredo->getParametroB() == Arredo::SMONTATO_VUOTO)
+                {
+                    $tmp = $tmp * $arredo->getCampo(Arredo::SMONTATO_VUOTO);
+
+
+                }
+                $mc+= $tmp;
+            }
 
         }
 
@@ -45,27 +63,43 @@ class CalcolatoreDettaglio {
     /*
 * Calcola e ritorna i mc
 */
-    private function _getMCNoSmontaggio()
+    private function _getMCMontaggio()
     {
         $mc = 0;
         foreach ($this->lista_arredi as $arredo)
         {
-            $tmp = $arredo->getMC();
-            if ($arredo->getParametroB() == Arredo::MONTATO_PIENO)
+            if ($arredo->getServizioMontaggio())
             {
-                $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_PIENO);
-                $mc+= $tmp;
+                $tmp = $arredo->getMC();
+                if ($arredo->getParametroB() == Arredo::MONTATO_PIENO)
+                {
+                    $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_PIENO);
+                    $mc+= $tmp;
 
+                }
+
+                if ($arredo->getParametroB() == Arredo::MONTATO_VUOTO)
+                {
+                    $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_VUOTO);
+                    $mc+= $tmp;
+
+                }
             }
 
-            if ($arredo->getParametroB() == Arredo::MONTATO_VUOTO)
+        }
+
+        return $mc;
+    }
+
+    private function _getMCImballaggio()
+    {
+        $mc = 0;
+        foreach ($this->lista_arredi as $arredo)
+        {
+            if ($arredo->getServizioImballaggio())
             {
-                $tmp = $tmp * $arredo->getCampo(Arredo::MONTATO_VUOTO);
-                $mc+= $tmp;
-
+                $mc += $arredo->getMC();
             }
-
-
 
         }
 
@@ -229,6 +263,7 @@ class CalcolatoreDettaglio {
             $costo = $mc * $tariffa['prezzo'];
         else
             $costo = $mc * $tariffa['tariffa_operatore'];
+
         return $costo;
     }
 
@@ -248,14 +283,18 @@ class CalcolatoreDettaglio {
     public function getDettaglioMC()
     {
         //calcola mc
+        $mc_standard = $this->getMC();
         $mc_smontaggio = $this->_getMCSmontaggio();
-        $mc_no_smontaggio = $this->_getMCNoSmontaggio();
-        $mc_da_trasportare = ($mc_smontaggio + $mc_no_smontaggio) * (1+ Parametri::getAggiustamentoMezzi());
+        $mc_montaggio = $this->_getMCMontaggio();
+        $mc_imballaggio = $this->_getMCImballaggio();
+        $mc_da_trasportare = ($mc_standard + $mc_smontaggio + $mc_montaggio + $mc_imballaggio) ;
         $mc_da_rimontare = $mc_smontaggio;
-        $mc_scarico_salita_piano = $mc_smontaggio + $mc_no_smontaggio;
+        $mc_scarico_salita_piano = $mc_standard + $mc_smontaggio + $mc_montaggio;
 
-        return array('mc_smontaggio'=>$mc_smontaggio,
-            'mc_no_smontaggio'=>$mc_no_smontaggio,
+        return array(
+            'mc_standard'=>$mc_standard,
+            'mc_smontaggio'=>$mc_smontaggio,
+            'mc_montaggio'=>$mc_montaggio,
             'mc_da_trasportare'=>$mc_da_trasportare,
             'mc_da_rimontare'=>$mc_da_rimontare,
             'mc_scarico_salita_piano'=>$mc_scarico_salita_piano);
@@ -264,45 +303,52 @@ class CalcolatoreDettaglio {
     public function elabora()
     {
 
+        $mc_standard = $this->_getMC();
         $mc_smontaggio = $this->_getMCSmontaggio();
-        $mc_no_smontaggio = $this->_getMCNoSmontaggio();
-        $mc_da_trasportare = ($mc_smontaggio + $mc_no_smontaggio) * (1+ Parametri::getAggiustamentoMezzi());
+        $mc_montaggio = $this->_getMCMontaggio();
+        $mc_imballaggio = $this->_getMCImballaggio();
+        $mc_da_trasportare = ($mc_standard + $mc_smontaggio + $mc_montaggio + $mc_imballaggio) ;
         $mc_da_rimontare = $mc_smontaggio;
-        $mc_scarico_salita = $mc_smontaggio + $mc_no_smontaggio;
+        $mc_scarico_salita = $mc_standard + $mc_smontaggio + $mc_montaggio;
 
-        $this->mc_smontaggio = $mc_smontaggio;
-       // echo "\nMC SMONTAGGIO: ".$mc_smontaggio;
-        $this->mc_no_smontaggio = $mc_no_smontaggio;
-       // echo "\nMC NO SMONTAGGIO: ".$mc_no_smontaggio;
-        $this->mc_da_trasportare = $mc_da_trasportare;
-      //  echo "\nMC DA TRASPORTARE: ".$mc_da_trasportare;
-        $this->mc_da_rimontare = $mc_da_rimontare;
-       // echo "\nMC DA RIMONTARE: ".$mc_da_rimontare;
-        $this->mc_scarico_salita_piano = $mc_scarico_salita;
-       // echo "\nMC SCARICO SALITA AL PIANO: ".$mc_scarico_salita;
 
+       //echo "\nMC Standard: ".$mc_standard;
+       //echo "\nMC SMONTAGGIO: ".$mc_smontaggio;
+
+       //echo "\nMC MONTAGGIO: ".$mc_montaggio;
+
+        //echo "\nMC IMBALLAGGIO: ".$mc_imballaggio;
+
+       // echo "\nMC DA TRASPORTARE: ".$mc_da_trasportare;
+
+      // echo "\nMC DA RIMONTARE: ".$mc_da_rimontare;
+
+       //echo "\nMC SCARICO SALITA AL PIANO: ".$mc_scarico_salita;
+
+        $margine = 1+doubleval(Parametri::getMargine());
+        //echo "\nMARGINE: ". $margine;
         //calcola costo servizi
-        $costo_servizio_smontaggio_imballo_carico = $this->_getCostoServizioSmontaggioImballoCarico($mc_smontaggio);
-       // echo "\nCostoServizioSmontaggioImballoCarico: ".$costo_servizio_smontaggio_imballo_carico;
-        $costo_servizio_imballo_carico = $this->_getCostoServizioImballoCarico($mc_no_smontaggio);
-       // echo "\nCostoServizioImballoCarico: ".$costo_servizio_imballo_carico;
-        $costo_trazione = $this->_getCostoTrazione($mc_da_trasportare, $this->km);
-       // echo "\nCostoTrazione: ".$costo_trazione." km: ".$this->km;
-        $deposito = $this->_getCostoServizioDeposito($this->mc, $this->giorni_deposito);
-       // echo "\nDeposito: ".$deposito;
-        $costo_servizio_scarico = $this->_getCostoServizioScarico($mc_scarico_salita);
-       // echo "\nCostoServiziScarico: ".$costo_servizio_scarico;
-        $costo_servizio_salita = $this->_getCostoServizioSalita($mc_scarico_salita);
-       // echo "\nCostoServiziSalita: ".$costo_servizio_salita;
-        $costo_servizio_montaggio = $this->_getCostoServizioMontaggio($mc_da_rimontare);
-       // echo "\nCostoServiziMontaggio: ".$costo_servizio_montaggio;
+        $costo_servizio_smontaggio_imballo_carico = $this->_getCostoServizioSmontaggioImballoCarico($mc_smontaggio, PreventivatoreDettagliato::COSTO_FORNITORE) * $margine;
+       //echo "\nCostoServizioSmontaggioImballoCarico: ".$costo_servizio_smontaggio_imballo_carico;
+        $costo_servizio_imballo_carico = $this->_getCostoServizioImballoCarico($mc_imballaggio, PreventivatoreDettagliato::COSTO_FORNITORE) * $margine;
+        //echo "\nCostoServizioImballoCarico: ".$costo_servizio_imballo_carico;
+        $costo_trazione = $this->_getCostoTrazione($mc_da_trasportare, $this->km) * $margine;
+        //echo "\nCostoTrazione: ".$costo_trazione." km: ".$this->km;
+        $deposito = $this->_getCostoServizioDeposito($this->mc, $this->giorni_deposito) * $margine;
+        //echo "\nDeposito: ".$deposito;
+        $costo_servizio_scarico = $this->_getCostoServizioScarico($mc_scarico_salita, PreventivatoreDettagliato::COSTO_FORNITORE) * $margine;
+        //echo "\nCostoServiziScarico: ".$costo_servizio_scarico;
+        $costo_servizio_salita = $this->_getCostoServizioSalita($mc_scarico_salita, PreventivatoreDettagliato::COSTO_FORNITORE) * $margine;
+        //echo "\nCostoServiziSalita: ".$costo_servizio_salita;
+        $costo_servizio_montaggio = $this->_getCostoServizioMontaggio($mc_da_rimontare, PreventivatoreDettagliato::COSTO_FORNITORE) * $margine;
+        //echo "\nCostoServiziMontaggio: ".$costo_servizio_montaggio;
 
         $costo_servizi = $costo_servizio_smontaggio_imballo_carico + $costo_servizio_imballo_carico +
             $costo_trazione + $deposito + $costo_servizio_scarico +
             $costo_servizio_salita + $costo_servizio_montaggio;
 
         //Aggiungi le aggravanti
-        $costo_servizi_accessori_partenza = $this->_getCostoServiziAccessoriPartenza($costo_servizi);
+        $costo_servizi_accessori_partenza = $this->_getCostoServiziAccessoriPartenza($costo_servizi );
         $costo_servizi_accessori_destinazione = $this->_getCostoServiziAccessoriDestinazione($costo_servizi);
 
         $valore_voci_extra  = 0;
