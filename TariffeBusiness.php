@@ -140,6 +140,8 @@ class TariffeBusiness {
 
         }
 
+
+
         //se ci sono record per quello specifico id_utente allora ha delle tariffe personalizzate
         //altrimenti seleziona le tariffe in base alla categoria (mobilieri, cucinieri, etc.)
         $sql = '';
@@ -147,6 +149,7 @@ class TariffeBusiness {
             $sql = "SELECT * FROM tariffe_servizi_business WHERE descrizione = '$tipo_servizio'  AND id_cliente='$id_cliente' ORDER BY mc ASC";
         else
             $sql = "SELECT * FROM tariffe_servizi_business WHERE descrizione = '$tipo_servizio'  AND tipologia_cliente='$tipologia_cliente' ORDER BY mc ASC";
+
 
         $res = mysql_query($sql);
         $lista = array();
@@ -156,6 +159,8 @@ class TariffeBusiness {
         }
 
         DBUtils::closeConnection($con);
+
+        return $lista;
     }
 
     public function updateTabella($lista)

@@ -17,6 +17,31 @@ class TestOrdine
     {
         $this->log = new KLogger('traslocabile.txt',KLogger::DEBUG);
     }
+
+    public function load()
+    {
+        $ordine = new Ordine(84);
+        $lista = $ordine->getListaOrdiniFornitori();
+        foreach ($lista as $ordine_fornitore)
+        {
+            $id_ordine_fornitore = $ordine_fornitore->id_ordine_fornitore;
+            $id_fornitore = $ordine_fornitore->id_fornitore;
+            $importo = $ordine_fornitore->importo;
+            $imponibile = $ordine_fornitore->imponibile;
+            $iva = $ordine_fornitore->iva;
+            //etc.
+
+            $numero_fattura = $ordine_fornitore->getNumeroFattura();
+            echo "\nOrdineFornitore: ".$id_ordine_fornitore;
+            echo "\nId Fornitore: ".$id_fornitore;
+            echo "\nImporto: ".$importo;
+            echo "\nNumero Fattura: ".$numero_fattura['numero_fattura']."/".$numero_fattura['anno'];
+            echo "\n*************************************************************";
+        }
+        //print_r($lista);
+
+    }
+
     public function run()
     {
         $this->log->LogDebug("Inizio");
@@ -56,4 +81,5 @@ class TestOrdine
 
 
 $test = new TestOrdine();
-$test->run();
+//$test->run();
+$test->load();
