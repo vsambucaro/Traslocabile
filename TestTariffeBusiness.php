@@ -18,7 +18,22 @@ class TestTariffeBusiness
         print_r($lista);
 
     }
+
+    public function testUpdate()
+    {
+        $obj = new TariffeBusiness(null,'CUCINIERI');
+        $lista = $obj->getTabella("SCARICO");
+        foreach ($lista as $record)
+        {
+            if ($record->id==20)
+            {
+                $record->costo = 15; //da 12 passa a 15;
+            }
+        }
+
+        $obj->updateTabella($lista);
+    }
 }
 
 $t = new TestTariffeBusiness();
-$t->test();
+$t->testUpdate();

@@ -172,20 +172,33 @@ class TariffeBusiness {
             $sql ='';
             if ($item->id != null)
             {
-                $sql = "UPDATE tariffe_servizi_business SET
+                if ($item->id_cliente) {
+
+                    $sql = "UPDATE tariffe_servizi_business SET
+                            mc = $item->mc,
+                            costo = $item->costo,
+                            id_cliente = $item->id_cliente,
+                            tipologia_cliente = '$item->tipologia_cliente' WHERE id=$item->id";
+                }
+                else {
+                    $sql = "UPDATE tariffe_servizi_business SET
                 mc = $item->mc,
                 costo = $item->costo,
-                id_cliente = $item->id_cliente,
-                tipologia_cliente = $item->tipologia_cliente";
+                id_cliente = null,
+                tipologia_cliente = '$item->tipologia_cliente' WHERE id=$item->id";
+
+                }
             }
             else
             {
                 $sql = "INSERT INTO tariffe_servizi_business (descrizione, mc, costo, id_cliente, tipologia_cliente)
-                VALUES ('$item->descrizione',$item->mc, $item->costo,$item->id_cliente,'$item->tipologia_cliente')";
+                VALUES ('$item->descrizione',$item->mc, $item->costo, $item->id_cliente,'$item->tipologia_cliente')";
 
             }
-
+            //echo "\nSQL:".$sql;
             $res = mysql_query($sql);
+            if (!$res)
+                echo "\nErrore: ";
         }
 
         DBUtils::closeConnection($con);
