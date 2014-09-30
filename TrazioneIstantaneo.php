@@ -37,7 +37,7 @@ class TrazioneIstantaneo {
 
 
         DBUtils::closeConnection($con);
-       // echo "\nCOSTO UNITARIO TRAZIONE: ".$costo;
+       //echo "\nCOSTO UNITARIO TRAZIONE: ".$costo;
         return $costo;
     }
 

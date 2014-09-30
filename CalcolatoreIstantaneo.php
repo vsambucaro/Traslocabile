@@ -65,8 +65,9 @@ class CalcolatoreIstantaneo {
         $prezzo_traslocatore = $costo_servizi + $costo_trazione;
         //echo "\nprezzo traslocatore: ".$prezzo_traslocatore;
 
-        $prezzo_cliente_senza_iva = $prezzo_traslocatore * (1 + Parametri::getMargine());
-        $prezzo_cliente_con_iva = $prezzo_cliente_senza_iva * (1 + Parametri::getIVA());
+        $margine = 1/(1- doubleval(Parametri::getMargine()));
+        $prezzo_cliente_senza_iva = round($prezzo_traslocatore * $margine,2);
+        $prezzo_cliente_con_iva = round($prezzo_cliente_senza_iva * (1 + Parametri::getIVA()),2);
 
 
         return array('prezzo_traslocatore'=>$prezzo_traslocatore,

@@ -37,6 +37,7 @@ class PreventivatoreDettagliato extends Preventivatore
 
 
 
+
     public function setLocalizzazionePartenza($id_localizzazione, $id_tipo, $id_piano)
     {
         $this->partenza_localizzazione = $id_localizzazione;
@@ -224,6 +225,7 @@ class PreventivatoreDettagliato extends Preventivatore
         $calcolatore->lista_servizi_destinazione = $this->lista_servizi_destinazione;
         $calcolatore->giorni_deposito = $this->giorni_deposito;
         $calcolatore->lista_voci_extra = $this->lista_voci_extra;
+        $calcolatore->destinazione_localizzazione_tipo_piano = $this->destinazione_localizzazione_tipo_piano;
         $result = $calcolatore->elabora();
 
         $this->prezzo_cliente_con_iva = round($result['prezzo_cliente_con_iva'], 2);
